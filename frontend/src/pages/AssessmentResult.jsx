@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { assessBatch, computeBatch } from '../api'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import { LocalizedContent } from '../i18n'
 
 export default function AssessmentResult() {
   const { id } = useParams()
@@ -43,15 +44,19 @@ export default function AssessmentResult() {
   }
 
   if (loading) return (
+    <LocalizedContent>
     <div className="page-body loading-center">
       <div className="spinner" /><span>Running risk assessment…</span>
     </div>
+    </LocalizedContent>
   )
   if (error) return (
+    <LocalizedContent>
     <div className="page-body">
       <div className="alert alert-crit" style={{ marginTop: 40 }}>{error}</div>
       <button className="btn btn-secondary" onClick={() => navigate(-1)} style={{ marginTop: 12 }}>Go Back</button>
     </div>
+    </LocalizedContent>
   )
 
   const { batch, risk, market_prices, decision } = data
@@ -68,6 +73,7 @@ export default function AssessmentResult() {
     : risk_category === 'Medium' ? 'var(--warn-text)' : 'var(--primary)'
 
   return (
+    <LocalizedContent>
     <div className="page-body">
       {/* Header */}
       <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom:24, flexWrap:'wrap', gap:12 }}>
@@ -352,5 +358,6 @@ export default function AssessmentResult() {
         <Link to="/register" className="btn btn-primary">+ Assess Another Crop</Link>
       </div>
     </div>
+    </LocalizedContent>
   )
 }

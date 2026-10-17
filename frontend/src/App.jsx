@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect } from 'react'
 import { BrowserRouter, useLocation, Navigate, useRoutes } from 'react-router-dom'
 import { useAuth, AuthProvider } from './auth'
 import TopNavbar from './TopNav'
+import { LanguageProvider, LocalizedContent, translateText, useLanguage } from './i18n'
 
 const FarmerHome = lazy(() => import('./pages/FarmerHome'))
 const Home = lazy(() => import('./pages/Home'))
@@ -24,18 +25,19 @@ const PAGE_META = {
 
 function RequireFarmer({ children }) {
   const { farmer, ready } = useAuth()
-  if (!ready) return (<div className="page-body loading-center"><div className="spinner"></div><span>Checking login�</span></div>)
+  if (!ready) return <LocalizedContent><div className="page-body loading-center"><div className="spinner"></div><span>Checking login…</span></div></LocalizedContent>
   if (!farmer) return (<Navigate to="/auth" replace />)
   return <>{children}</>
 }
 
 function TitleSetter() {
   const loc = useLocation()
+  const { language } = useLanguage()
   const key = /^\/batches\/[^/]+\/result$/.test(loc.pathname)
     ? '/batches/:id/result'
     : loc.pathname
   const meta = PAGE_META[key] || { title: 'CropShield' }
-  const docTitle = meta.title
+  const docTitle = translateText(meta.title, language)
 
   useEffect(() => {
     document.title = docTitle
@@ -61,7 +63,7 @@ function AppShell() {
     <div className="app-top">
       <TopNavbar />
       <main className="page-canvas top">
-        <Suspense fallback={<div className="page-body loading-center"><span>Loading page…</span></div>}>
+        <Suspense fallback={<LocalizedContent><div className="page-body loading-center"><span>Loading page…</span></div></LocalizedContent>}>
           {routes}
         </Suspense>
       </main>
@@ -72,10 +74,12 @@ function AppShell() {
 export default function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <TitleSetter />
-        <AppShell />
-      </AuthProvider>
+      <LanguageProvider>
+        <AuthProvider>
+          <TitleSetter />
+          <AppShell />
+        </AuthProvider>
+      </LanguageProvider>
     </BrowserRouter>
   )
 }

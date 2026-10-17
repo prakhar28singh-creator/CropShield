@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from './auth'
+import { LocalizedContent, useLanguage } from './i18n'
 
 const I = {
   home: (<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z" /></svg>),
@@ -25,11 +26,13 @@ const PVT = [
 
 export default function TopNavbar() {
   const { farmer, logout } = useAuth()
+  const { language, setLanguage } = useLanguage()
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const out = () => { logout(); setOpen(false); navigate('/') }
   const links = farmer ? [...PUB, ...PVT] : PUB
   return (
+    <LocalizedContent>
     <header className="topnav">
       <div className="topnav-inner">
         <NavLink to="/" className="topnav-brand" onClick={() => setOpen(false)}>
@@ -54,6 +57,12 @@ export default function TopNavbar() {
           ))}
         </nav>
         <div className="topnav-right">
+          <div className="language-switch" role="group" aria-label="Choose language">
+            <button type="button" className={language === 'en' ? 'active' : ''}
+              aria-pressed={language === 'en'} onClick={() => setLanguage('en')}>English</button>
+            <button type="button" className={language === 'hi' ? 'active' : ''}
+              aria-pressed={language === 'hi'} onClick={() => setLanguage('hi')}>हिन्दी</button>
+          </div>
           {farmer ? (
             <><span className="topnav-user">{farmer.name.split(' ')[0]}</span>
               <button className="topnav-logout" onClick={out}>Logout</button></>
@@ -77,5 +86,6 @@ export default function TopNavbar() {
         </div>
       )}
     </header>
+    </LocalizedContent>
   )
 }

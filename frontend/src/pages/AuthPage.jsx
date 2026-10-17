@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { registerFarmer, loginFarmer, getMarketMeta } from '../api'
 import { useAuth } from '../auth'
+import { LocalizedContent } from '../i18n'
 
 export default function AuthPage() {
   const [mode, setMode] = useState('register') // 'register' | 'login'
@@ -46,6 +47,7 @@ export default function AuthPage() {
   }
 
   return (
+    <LocalizedContent>
     <div className="page-body">
       <div className="auth-wrap">
         <div className="auth-side">
@@ -131,5 +133,6 @@ export default function AuthPage() {
         </div>
       </div>
     </div>
+    </LocalizedContent>
   )
 }

@@ -53,6 +53,14 @@
   --ease: cubic-bezier(.22,1,.36,1);
 }
 
+html[lang="hi"] body,
+html[lang="hi"] button,
+html[lang="hi"] input,
+html[lang="hi"] select,
+html[lang="hi"] textarea {
+  font-family: "Nirmala UI", "Mangal", var(--font-sans);
+}
+
 /* ─── BUTTONS ─── */
 .btn {
   display: inline-flex;

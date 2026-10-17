@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { getBatches, assessBatch } from '../api'
+import { LocalizedContent } from '../i18n'
+import { useLanguage } from '../i18n'
 
 export default function BatchList() {
+  const { language } = useLanguage()
   const [batches, setBatches] = useState([])
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
@@ -16,15 +19,18 @@ export default function BatchList() {
     catch { alert('Assessment failed.') }
   }
 
-  if (loading) return <div className="page-body loading-center"><div className="spinner" /></div>
+  if (loading) return <LocalizedContent><div className="page-body loading-center"><div className="spinner" /></div></LocalizedContent>
 
   return (
+    <LocalizedContent>
     <div className="page-body">
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
         <div>
           <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-1)', letterSpacing: '-0.015em', marginBottom: 2 }}>Crop Batches</div>
           <div style={{ fontSize: 13, color: 'var(--text-2)' }}>
-            {batches.length} batch{batches.length !== 1 ? 'es' : ''} registered
+            {batches.length} {language === 'hi'
+              ? (batches.length === 1 ? 'फसल दर्ज' : 'फसलें दर्ज')
+              : `batch${batches.length !== 1 ? 'es' : ''} registered`}
           </div>
         </div>
         <Link to="/register" className="btn btn-primary">+ Register New Batch</Link>
@@ -93,5 +99,6 @@ export default function BatchList() {
         )}
       </div>
     </div>
+    </LocalizedContent>
   )
 }

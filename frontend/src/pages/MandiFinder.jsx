@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
 import { getMarketPrices, getMarketMeta } from '../api'
+import { LocalizedContent, useLanguage } from '../i18n'
 
 const DEMO = 'DEMO DATA — Sample prices based on typical AGMARKNET ranges. Not live market data.'
 
 export default function MandiFinder() {
+  const { language } = useLanguage()
   const [meta, setMeta] = useState(null)
   const [state, setState] = useState('')
   const [district, setDistrict] = useState('')
@@ -43,6 +45,7 @@ export default function MandiFinder() {
   const foundMarkets = results?.markets || []
 
   return (
+    <LocalizedContent>
     <div className="page-body">
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
@@ -123,7 +126,9 @@ export default function MandiFinder() {
           <div className="card" style={{ marginBottom: 16 }}>
             <div className="card-header">
               <span className="card-title">
-                📋 {results.markets.length} market{results.markets.length !== 1 ? 's' : ''} found
+                📋 {results.markets.length} {language === 'hi'
+                  ? (results.markets.length === 1 ? 'मंडी मिली' : 'मंडियां मिलीं')
+                  : `market${results.markets.length !== 1 ? 's' : ''} found`}
                 <span className="muted" style={{ fontWeight: 400 }}>
                   {' '}— {crop.charAt(0).toUpperCase() + crop.slice(1)}
                   {state ? `, ${state}` : ''}
@@ -240,5 +245,6 @@ export default function MandiFinder() {
         Prices are indicative wholesale rates; verify before making selling decisions.
       </div>
     </div>
+    </LocalizedContent>
   )
 }

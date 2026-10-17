@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { createBatch, assessBatch, getCrops, getMarketMeta } from '../api'
 import { useAuth } from '../auth'
+import { LocalizedContent } from '../i18n'
 
 const STORAGE_OPTIONS = [
   { value: 'cold_storage',   label: 'Cold Storage' },
@@ -132,6 +133,7 @@ export default function CropRegistration() {
   }
 
   return (
+    <LocalizedContent>
     <div className="reg-wrap">
       <div className="reg-head">
         <h1>Register Crop Batch</h1>
@@ -280,5 +282,6 @@ export default function CropRegistration() {
         </form>
       </div>
     </div>
+    </LocalizedContent>
   )
 }

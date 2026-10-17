@@ -5,6 +5,7 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts'
 import { getDashboardSummary, getBatches, assessBatch, getMarketPrices } from '../api'
+import { LocalizedContent, useLanguage } from '../i18n'
 
 const CROP_BADGE = { tomato: 'bg-crit', potato: 'bg-warn', onion: 'bg-info', wheat: 'bg-ok' }
 const STORAGE_RISK = { cold_storage: 'Low', ventilated_room: 'Low', open_room: 'Medium', bamboo_basket: 'High', gunny_bag: 'High' }
@@ -35,6 +36,7 @@ const ChartTooltip = ({ active, payload, label, prefix = '₹', suffix = '' }) =
 }
 
 export default function Dashboard() {
+  const { language } = useLanguage()
   const [summary, setSummary] = useState(null)
   const [batches, setBatches] = useState([])
   const [priceData, setPriceData] = useState({})
@@ -63,16 +65,20 @@ export default function Dashboard() {
   }
 
   if (loading) return (
+    <LocalizedContent>
     <div className="page-body" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 400, gap: 16 }}>
       <div className="spinner" />
       <span style={{ fontSize: 13, color: 'var(--text-2)' }}>Loading dashboard…</span>
     </div>
+    </LocalizedContent>
   )
 
   if (error) return (
+    <LocalizedContent>
     <div className="page-body">
       <div className="alert alert-crit" style={{ marginTop: 40 }}>{error}</div>
     </div>
+    </LocalizedContent>
   )
 
   const prices = summary?.latest_prices || {}
@@ -130,6 +136,7 @@ export default function Dashboard() {
   }
 
   return (
+    <LocalizedContent>
     <div className="page-body">
 
       {/* ── PAGE HEADER ── */}
@@ -139,7 +146,7 @@ export default function Dashboard() {
             Operations Dashboard
           </div>
           <div style={{ fontSize: 13, color: 'var(--text-2)', marginTop: 3 }}>
-            Post-harvest monitoring · {CURRENT_DATE.toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+            Post-harvest monitoring · {CURRENT_DATE.toLocaleDateString(language === 'hi' ? 'hi-IN' : 'en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
           </div>
         </div>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
@@ -479,5 +486,6 @@ export default function Dashboard() {
       </div>
 
     </div>
+    </LocalizedContent>
   )
 }

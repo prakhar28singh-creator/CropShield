@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../auth'
 import FarmerHome from './FarmerHome'
+import { LocalizedContent } from '../i18n'
 
 const FACTS = [
   { value: 'Open access', label: 'Browse mandi prices without an account' },
@@ -49,6 +50,7 @@ export default function Home() {
   const { farmer } = useAuth();
   if (farmer) return <FarmerHome />;
   return (
+    <LocalizedContent>
     <div className="landing">
       <section className="landing-hero">
         <div className="landing-hero-text">
@@ -171,5 +173,6 @@ export default function Home() {
         <div className="landing-fine">Prices shown are sample data for demonstration. CropShield gives guidance, not guarantees — verify with your local market and extension officer.</div>
       </section>
     </div>
+    </LocalizedContent>
   );
 }

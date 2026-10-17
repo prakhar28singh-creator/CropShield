@@ -9,6 +9,7 @@ import {
   ShieldCheck,
 } from 'lucide-react'
 import { useAuth } from '../auth'
+import { LocalizedContent } from '../i18n'
 
 const ACTIONS = [
   {
@@ -70,6 +71,7 @@ export default function FarmerHome() {
   const place = [farmer?.village, farmer?.district, farmer?.state].filter(Boolean).join(', ')
 
   return (
+    <LocalizedContent>
     <div className="farmer-home">
       <section className="farmer-welcome">
         <div className="farmer-welcome-copy">
@@ -144,5 +146,6 @@ export default function FarmerHome() {
         </div>
       </section>
     </div>
+    </LocalizedContent>
   )
 }

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { LocalizedContent } from '../i18n'
 
 const PILLARS = [
   { icon: '1', title: 'Spoilage-risk first', body: 'Every batch gets a Low / Medium / High risk grade with exact reasons — heat, humidity, storage method, harvest age — plus practical steps to slow loss.' },
@@ -18,6 +19,7 @@ const STACK = [
 
 export default function AboutPage() {
   return (
+    <LocalizedContent>
     <div className="page-body">
       <div className="about-hero">
         <div className="auth-eyebrow">ABOUT CROPSHIELD</div>
@@ -64,5 +66,6 @@ export default function AboutPage() {
         CropShield provides guidance, not guarantees — verify with your local market and extension officer.
       </div>
     </div>
+    </LocalizedContent>
   )
 }
