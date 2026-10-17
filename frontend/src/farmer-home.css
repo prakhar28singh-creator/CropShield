@@ -1,0 +1,18 @@
+/* FarmerHome — personal logged-in landing */
+.farmer-welcome{display:flex;gap:28px;align-items:center;justify-content:space-between;background:linear-gradient(135deg,#0c3b22,#14532d 60%,#166534);border-radius:24px;padding:40px 36px;color:#f0fdf4;margin-bottom:36px;position:relative;overflow:hidden}
+.farmer-welcome::after{content:'';position:absolute;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(163,230,53,.35),transparent 70%);top:-120px;right:-80px}
+.farmer-welcome h1{font-size:32px;font-weight:800;letter-spacing:-.02em;margin:10px 0 10px}
+.farmer-welcome p{color:#d1fae5;font-size:15px;max-width:560px;line-height:1.6;margin-bottom:20px}
+.farmer-eyebrow{display:inline-block;background:rgba(163,230,53,.18);border:1px solid rgba(163,230,53,.4);color:#d9f99d;font-size:12px;font-weight:700;padding:6px 14px;border-radius:999px;letter-spacing:.04em}
+.farmer-idcard{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(8px);border-radius:16px;padding:18px 20px;display:flex;align-items:center;gap:14px;min-width:280px;position:relative;z-index:1}
+.farmer-avatar{width:48px;height:48px;border-radius:50%;background:#a3e635;color:#0b2415;font-weight:800;font-size:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.farmer-idname{font-weight:700;font-size:16px}
+.farmer-idsub{font-size:12px;color:#bbf7d0}
+.farmer-logged{margin-left:auto;font-size:11px;color:#86efac;font-weight:700;white-space:nowrap}
+.farmer-action{text-decoration:none;transition:transform .15s ease,box-shadow .15s ease}
+.farmer-action:hover{transform:translateY(-3px);box-shadow:0 14px 30px -12px rgba(12,31,20,.25)}
+.farmer-action.hot{border:2px solid var(--primary);background:linear-gradient(180deg,#f0fdf4,#fff)}
+.farmer-cta{display:inline-block;margin-top:10px;font-size:13px;font-weight:700;color:var(--primary)}
+@media(max-width:900px){.farmer-welcome{flex-direction:column;align-items:flex-start}.farmer-idcard{width:100%}}
+.locked-field{display:flex;align-items:center;gap:10px;background:var(--surface-accent);border:1px dashed var(--border-strong);border-radius:var(--r-md);padding:11px 14px;font-weight:700;color:var(--text-1)}
+.locked-field .locked-badge{margin-left:auto;font-size:11px;font-weight:700;color:var(--primary);background:#dcfce7;border-radius:999px;padding:3px 10px;white-space:nowrap}

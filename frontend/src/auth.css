@@ -1,0 +1,68 @@
+/* CropShield AI — colorful Farmer Auth page */
+.auth-wrap{display:grid;grid-template-columns:1fr 1.05fr;gap:26px;align-items:start;
+max-width:1060px;margin:26px auto}
+.auth-side{border-radius:20px;padding:34px 30px;color:#fff;position:relative;overflow:hidden;
+background:linear-gradient(140deg,#052e16 0%,#166534 45%,#16a34a 100%);
+box-shadow:0 20px 50px -18px rgba(5,46,22,.55)}
+.auth-side::before{content:'';position:absolute;inset:0;
+background:radial-gradient(circle at 85% 15%,rgba(163,230,53,.4),transparent 45%),
+radial-gradient(circle at 10% 90%,rgba(255,255,255,.14),transparent 40%)}
+.auth-side>*{position:relative;z-index:1}
+.auth-eyebrow{font-size:11px;font-weight:800;letter-spacing:.14em;color:#d9f99d;margin-bottom:14px}
+.auth-side h1{font-size:34px;font-weight:900;letter-spacing:-.02em;line-height:1.12;margin:0 0 12px}
+.auth-side h1 span{color:#d9f99d}
+.auth-side p{font-size:14px;line-height:1.65;color:rgba(255,255,255,.88);margin:0 0 18px}
+.auth-points{list-style:none;margin:0 0 20px;padding:16px;border-radius:14px;
+background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2)}
+.auth-points li{display:flex;gap:10px;align-items:center;font-size:13.5px;font-weight:600;
+color:#fff;padding:5px 0}
+.auth-points li b{display:flex;align-items:center;justify-content:center;width:22px;height:22px;
+flex-shrink:0;border-radius:50%;background:#a3e635;color:#052e16;font-size:12px}
+.auth-guest{font-size:13px;color:rgba(255,255,255,.85)}
+.auth-guest a{color:#d9f99d;font-weight:700}
+.auth-card{border-radius:20px;overflow:hidden;border:1px solid var(--border);
+box-shadow:0 20px 50px -20px rgba(5,46,22,.25);background:#fff}
+.auth-tabs{display:grid;grid-template-columns:1fr 1fr;padding:8px;gap:8px;
+background:linear-gradient(180deg,#f2f7ef,#eef3ea)}
+.auth-tabs button{border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:800;
+cursor:pointer;color:#6b7f70;background:transparent;transition:all .2s}
+.auth-tabs button.active{color:#fff;background:linear-gradient(135deg,#16a34a,#15803d);
+box-shadow:0 6px 16px rgba(22,163,74,.4)}
+.auth-tabs button:not(.active):hover{background:#fff;color:#0c1f14}
+.auth-card .card-body{padding:24px 26px 22px}
+.auth-card label{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+color:#166534;margin-bottom:6px}
+.auth-card input,.auth-card select{border:1.5px solid #d3ded1;border-radius:12px;
+padding:11px 14px;font-size:14px;transition:all .18s;background:#fbfdfb}
+.auth-card input:focus,.auth-card select:focus{outline:none;border-color:#16a34a;
+box-shadow:0 0 0 4px rgba(22,163,74,.15);background:#fff}
+.auth-submit{width:100%;margin-top:16px;border:none;border-radius:14px;padding:14px;
+font-size:15px;font-weight:800;color:#fff;cursor:pointer;
+background:linear-gradient(135deg,#16a34a,#052e16);box-shadow:0 10px 24px rgba(22,163,74,.4);
+transition:all .2s}
+.auth-submit:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 14px 30px rgba(22,163,74,.5)}
+.auth-submit:disabled{opacity:.6;cursor:wait}
+.auth-switch{font-size:12.5px;color:var(--text-3);margin-top:14px;text-align:center}
+.link-btn{background:none;border:none;color:#16a34a;font-weight:800;font-size:12.5px;
+cursor:pointer;text-decoration:underline}
+/* About page */
+.about-hero{border-radius:20px;padding:38px 34px;color:#fff;margin-bottom:20px;
+background:linear-gradient(130deg,#052e16,#166534 60%,#22c55e);
+box-shadow:0 20px 50px -18px rgba(5,46,22,.5)}
+.about-hero h1{font-size:32px;font-weight:900;letter-spacing:-.02em;line-height:1.15;margin:0 0 12px}
+.about-hero h1 span{color:#d9f99d}
+.about-hero p{font-size:14px;line-height:1.65;color:rgba(255,255,255,.9);max-width:640px;margin:0 0 18px}
+.about-cta{display:flex;gap:10px;flex-wrap:wrap}
+.about-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.about-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:20px;
+box-shadow:var(--shadow-sm)}
+.about-ico{font-size:26px;margin-bottom:10px}
+.about-card h3{font-size:15px;font-weight:800;color:var(--text-1);margin:0 0 6px}
+.about-card p{font-size:13px;color:var(--text-2);line-height:1.6;margin:0}
+.about-flow{margin:6px 0 0;padding-left:20px;font-size:13px;color:var(--text-2);line-height:1.7}
+.about-stack{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:10px}
+.about-stack-item{background:var(--surface-accent);border:1px solid var(--border);
+border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
+.about-stack-item b{font-size:13px;color:var(--text-1)}
+.about-stack-item span{font-size:12px;color:var(--text-2)}
+@media(max-width:900px){.auth-wrap{grid-template-columns:1fr}}

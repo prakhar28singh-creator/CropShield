@@ -1,0 +1,16 @@
+/* part2a: buttons badges */
+.btn { display: inline-flex !important; align-items: center !important; justify-content: center !important; gap: 8px !important; font-family: 'Inter',sans-serif !important; font-weight: 700 !important; font-size: 14px !important; padding: 11px 20px !important; border-radius: 12px !important; border: 1px solid transparent !important; cursor: pointer !important; text-decoration: none !important; transition: all .25s cubic-bezier(.22,1,.36,1) !important; }
+.btn:active { transform: scale(.97) !important; }
+.btn:disabled { opacity: .55 !important; cursor: not-allowed !important; }
+.btn-primary { background: linear-gradient(135deg,#16a34a,#15803d) !important; color: #fff !important; box-shadow: 0 8px 20px -6px rgba(22,163,74,.5) !important; }
+.btn-primary:hover { transform: translateY(-2px) !important; box-shadow: 0 14px 28px -6px rgba(22,163,74,.55) !important; }
+.btn-secondary { background: #fff !important; color: #0b1f13 !important; border-color: #dfe8dd !important; }
+.btn-secondary:hover { border-color: #16a34a !important; transform: translateY(-2px) !important; }
+.btn-lg { padding: 15px 30px !important; font-size: 15px !important; border-radius: 14px !important; }
+.btn-sm { padding: 7px 14px !important; font-size: 12.5px !important; border-radius: 9px !important; }
+.badge { display: inline-flex !important; align-items: center !important; padding: 4px 11px !important; border-radius: 9999px !important; font-size: 11px !important; font-weight: 700 !important; border: 1px solid transparent !important; }
+.badge-ok { background: #f0fdf4 !important; color: #15803d !important; border-color: #bbf7d0 !important; }
+.badge-warn { background: #fffbeb !important; color: #b45309 !important; border-color: #fde68a !important; }
+.badge-crit { background: #fef2f2 !important; color: #b91c1c !important; border-color: #fecaca !important; }
+.badge-info { background: #eff6ff !important; color: #1d4ed8 !important; border-color: #bfdbfe !important; }
+.badge-demo { background: #fffbeb !important; color: #92400e !important; border-color: #fcd34d !important; }

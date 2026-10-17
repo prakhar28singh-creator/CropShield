@@ -1,0 +1,34 @@
+/* Register Crop Batch — professional form layout (isolated, no global clash) */
+.reg-wrap { max-width: 1060px; margin: 0 auto; }
+.reg-head h1 { font-size: 26px; font-weight: 800; color: #0b1f13; letter-spacing: -.02em; margin: 0 0 4px; }
+.reg-head p { font-size: 13.5px; color: #5b6f61; margin: 0 0 20px; }
+.reg-card { background: #fff; border: 1px solid #e2eae0; border-radius: 20px; box-shadow: 0 14px 36px -18px rgba(11,31,19,.25); overflow: hidden; }
+.reg-farmer { display: flex; align-items: center; gap: 14px; padding: 16px 22px; background: linear-gradient(90deg,#f0fdf4,#ecfccb); border-bottom: 1px solid #d9e8d5; }
+.reg-avatar { width: 46px; height: 46px; border-radius: 50%; background: linear-gradient(135deg,#16a34a,#65a30d); color: #fff; font-weight: 800; font-size: 18px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.reg-farmer-name { font-weight: 800; font-size: 15px; color: #0b1f13; }
+.reg-farmer-sub { font-size: 12px; color: #4d6353; }
+.reg-lock { margin-left: auto; font-size: 11.5px; font-weight: 700; color: #15803d; background: #fff; border: 1px solid #bbf7d0; padding: 6px 12px; border-radius: 999px; white-space: nowrap; }
+.reg-body { padding: 22px; display: flex; flex-direction: column; gap: 20px; }
+.reg-section { border: 1px solid #e6eee5; border-radius: 16px; padding: 20px; background: #fdfffd; }
+.reg-section-title { font-size: 15px; font-weight: 800; color: #0b1f13; margin: 0 0 4px; }
+.reg-section-sub { font-size: 12.5px; color: #6b7f70; margin: 0 0 16px; }
+.reg-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; }
+.reg-field { display: flex; flex-direction: column; min-width: 0; }
+.span-3 { grid-column: span 3; } .span-4 { grid-column: span 4; } .span-6 { grid-column: span 6; } .span-12 { grid-column: span 12; }
+.reg-label { font-size: 11px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: #33463a; margin-bottom: 7px; }
+.reg-label .req { color: #dc2626; }
+.reg-field input, .reg-field select { width: 100%; height: 46px; padding: 0 14px; font-size: 14px; font-family: inherit; color: #0b1f13; background: #fbfdfb; border: 1.5px solid #d3ded1; border-radius: 12px; outline: none; transition: border-color .2s, box-shadow .2s, background .2s; }
+.reg-field input:focus, .reg-field select:focus { border-color: #16a34a; background: #fff; box-shadow: 0 0 0 4px rgba(22,163,74,.14); }
+.reg-field input.input-err { border-color: #dc2626; background: #fef2f2; }
+.reg-hint { font-size: 11.5px; color: #7a8d80; margin-top: 6px; line-height: 1.5; }
+.reg-err { font-size: 11.5px; color: #b91c1c; font-weight: 700; margin-top: 6px; }
+.reg-skel { border-radius: 12px; background: linear-gradient(90deg,#eef3ec 25%,#f7faf6 50%,#eef3ec 75%); background-size: 200% 100%; animation: reg-shimmer 1.2s infinite; }
+@keyframes reg-shimmer { to { background-position: -200% 0; } }
+.reg-alert { border-radius: 14px; padding: 13px 16px; font-size: 13px; line-height: 1.55; border: 1px solid; }
+.reg-alert.err { background: #fef2f2; border-color: #fecaca; color: #7f1d1d; }
+.reg-alert.ok { background: #f0fdf4; border-color: #bbf7d0; color: #14532d; }
+.reg-progress { display: flex; gap: 8px; align-items: center; font-size: 12.5px; font-weight: 700; color: #15803d; }
+.reg-progress .spin { width: 18px; height: 18px; border-radius: 50%; border: 3px solid #d3ecd7; border-top-color: #16a34a; animation: reg-spin .7s linear infinite; }
+@keyframes reg-spin { to { transform: rotate(360deg); } }
+.reg-foot { display: flex; gap: 10px; justify-content: flex-end; align-items: center; padding: 16px 22px; border-top: 1px solid #e6eee5; background: #fafcfa; }
+@media (max-width: 900px) { .span-3, .span-4, .span-6 { grid-column: span 12; } .reg-body { padding: 16px; } .reg-foot { flex-direction: column-reverse; align-items: stretch; } }

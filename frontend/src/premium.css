@@ -1,0 +1,56 @@
+/* CropShield premium override v2 — part 1: tokens + shell */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Fraunces:opsz,wght@9..144,700;9..144,800;9..144,900&display=swap');
+:root {
+  --cs-primary: #16a34a; --cs-p700: #166534; --cs-p900: #052e16;
+  --cs-lime: #a3e635; --cs-lime-soft: #ecfccb; --cs-gold: #f59e0b;
+  --cs-bg: #f5f8f3; --cs-card: #fff;
+  --cs-ink1: #0b1f13; --cs-ink2: #3d5345; --cs-ink3: #7a8d80;
+  --cs-border: #e1eae0; --cs-ease: cubic-bezier(.22,1,.36,1);
+  --cs-lg: 0 24px 60px -20px rgba(11,31,19,.28), 0 6px 18px rgba(11,31,19,.08);
+  --cs-md: 0 10px 28px -10px rgba(11,31,19,.18);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0 !important;
+  font-family: 'Inter',-apple-system,'Segoe UI',Roboto,sans-serif !important;
+  background: radial-gradient(1100px 500px at 85% -5%, rgba(163,230,53,.22), transparent 60%), radial-gradient(900px 480px at -10% 10%, rgba(22,163,74,.14), transparent 60%), #f5f8f3 !important;
+  color: #0b1f13 !important; -webkit-font-smoothing: antialiased;
+}
+#root { min-height: 100vh; }
+.app-shell { display: flex !important; min-height: 100vh; background: transparent !important; }
+.sidebar {
+  width: 272px !important; min-width: 272px !important; min-height: 100vh !important;
+  position: sticky !important; top: 0 !important;
+  background: linear-gradient(180deg,#0a2414 0%,#0d3120 45%,#10402a 100%) !important;
+  border-right: 1px solid rgba(163,230,53,.18) !important;
+  padding: 22px 16px 16px !important; display: flex !important;
+  flex-direction: column !important; gap: 6px !important; color: #e8f3e9 !important;
+}
+.sidebar-brand { display: flex !important; align-items: center !important; gap: 12px !important; padding: 8px 10px 18px !important; }
+.brand-mark {
+  width: 44px !important; height: 44px !important; border-radius: 14px !important; flex-shrink: 0 !important;
+  display: flex !important; align-items: center !important; justify-content: center !important;
+  font-size: 22px !important; color: #0b1f13 !important;
+  background: linear-gradient(135deg,#d9f99d,#a3e635 60%,#65a30d) !important;
+  box-shadow: 0 8px 20px rgba(163,230,53,.4) !important;
+}
+.brand-text { display: flex !important; flex-direction: column !important; line-height: 1.1 !important; }
+.brand-name { font-weight: 800 !important; font-size: 17px !important; color: #fff !important; }
+.brand-tag { font-size: 10.5px !important; letter-spacing: .14em !important; text-transform: uppercase !important; color: #a3e635 !important; font-weight: 700 !important; }
+.sidebar-section-label { font-size: 10.5px !important; font-weight: 700 !important; letter-spacing: .14em !important; text-transform: uppercase !important; color: rgba(232,243,233,.55) !important; padding: 14px 12px 8px !important; }
+.sidebar-nav { display: flex !important; flex-direction: column !important; gap: 4px !important; }
+.sidebar-nav a {
+  display: flex !important; align-items: center !important; gap: 12px !important;
+  padding: 11px 12px !important; border-radius: 12px !important;
+  color: rgba(238,245,239,.82) !important; font-size: 14px !important; font-weight: 500 !important;
+  text-decoration: none !important; border: 1px solid transparent !important;
+  transition: all .25s cubic-bezier(.22,1,.36,1) !important;
+}
+.sidebar-nav a:hover { background: rgba(255,255,255,.07) !important; color: #fff !important; }
+.sidebar-nav a.active { background: linear-gradient(135deg,#a3e635,#65d36a) !important; color: #0b1f13 !important; font-weight: 700 !important; box-shadow: 0 8px 22px rgba(163,230,53,.35) !important; }
+.nav-icon { width: 32px !important; height: 32px !important; border-radius: 9px !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; font-size: 15px !important; background: rgba(255,255,255,.1) !important; }
+.sidebar-nav a.active .nav-icon { background: rgba(11,31,19,.15) !important; }
+.sidebar-footer { margin-top: auto !important; padding: 14px !important; border-radius: 14px !important; background: rgba(163,230,53,.1) !important; border: 1px solid rgba(163,230,53,.22) !important; font-size: 11.5px !important; line-height: 1.6 !important; color: rgba(232,243,233,.85) !important; }
+.page-canvas { flex: 1 !important; min-width: 0 !important; padding: 26px 30px 110px !important; max-width: 1280px !important; }
+.mobile-topbar, .bottom-nav { display: none !important; }
