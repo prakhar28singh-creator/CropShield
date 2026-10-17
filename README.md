@@ -158,9 +158,9 @@ Do not use a temporary filesystem for `/data`.
    in Vercel, then add its exact HTTPS origin to the backend's `CORS_ORIGINS`
    and redeploy/restart the backend.
 
-Client-side routes such as `/finder` and `/about` are supported by the included
-`frontend/vercel.json` rewrite. Verify a route by opening its URL directly in a
-new browser tab after deployment.
+Client-side routes such as `/finder`, `/about`, `/how-it-works`, and `/contact`
+are supported by the included `frontend/vercel.json` rewrite. Verify a route by
+opening its URL directly in a new browser tab after deployment.
 
 ### Vercel preview deployments
 

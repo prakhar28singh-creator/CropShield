@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from './auth'
 import { LocalizedContent, useLanguage } from './i18n'
 
@@ -14,9 +14,11 @@ const I = {
 }
 
 const PUB = [
-  { to: '/', end: true, icon: I.home, label: 'Home' },
-  { to: '/finder', end: false, icon: I.chart, label: 'Mandi Prices' },
-  { to: '/about', end: false, icon: I.info, label: 'About Us' },
+  { to: '/', end: true, icon: I.home, label: 'Home', route: true },
+  { to: '/finder', end: false, icon: I.chart, label: 'Mandi Prices', route: true },
+  { to: '/about', end: false, icon: I.info, label: 'About Us', route: true },
+  { to: '/how-it-works', end: false, icon: I.grid, label: 'How It Works', route: true },
+  { to: '/contact', end: false, icon: I.user, label: 'Contact', route: true },
 ]
 const PVT = [
   { to: '/register', end: false, icon: I.shield, label: 'Register Crop' },
@@ -27,13 +29,16 @@ const PVT = [
 export default function TopNavbar() {
   const { farmer, logout } = useAuth()
   const { language, setLanguage } = useLanguage()
+  const location = useLocation()
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const out = () => { logout(); setOpen(false); navigate('/') }
-  const links = farmer ? [...PUB, ...PVT] : PUB
+  const links = farmer ? [...PUB.filter(n => n.route), ...PVT] : PUB
+  const isPublicHome = location.pathname === '/' && !farmer
+  const navLinks = links
   return (
     <LocalizedContent>
-    <header className="topnav">
+    <header className={`topnav${isPublicHome ? ' topnav-home' : ''}`}>
       <div className="topnav-inner">
         <NavLink to="/" className="topnav-brand" onClick={() => setOpen(false)}>
           <img className="topnav-brand-icon" src="/favicon.svg?v=2" alt="" />
@@ -42,16 +47,9 @@ export default function TopNavbar() {
           </div>
         </NavLink>
         <nav className="topnav-links">
-          {PUB.map(n => (
+          {navLinks.map(n => (
             <NavLink key={n.to} to={n.to} end={n.end}
               className={({ isActive }) => 'topnav-link' + (isActive ? ' active' : '')}>
-              <span className="topnav-ico">{n.icon}</span>{n.label}
-            </NavLink>
-          ))}
-          {farmer && <span className="topnav-sep" />}
-          {farmer && PVT.map(n => (
-            <NavLink key={n.to} to={n.to} end={n.end}
-              className={({ isActive }) => 'topnav-link farmer' + (isActive ? ' active' : '')}>
               <span className="topnav-ico">{n.icon}</span>{n.label}
             </NavLink>
           ))}
@@ -75,7 +73,7 @@ export default function TopNavbar() {
       </div>
       {open && (
         <div className="topnav-mobile">
-          {links.map(n => (
+          {navLinks.map(n => (
             <NavLink key={n.to} to={n.to} end={n.end} onClick={() => setOpen(false)}
               className={({ isActive }) => 'topnav-link' + (isActive ? ' active' : '')}>
               <span className="topnav-ico">{n.icon}</span>{n.label}

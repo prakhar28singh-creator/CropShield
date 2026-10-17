@@ -1,0 +1,166 @@
+.page-motion {
+  display: contents;
+}
+
+.motion-item {
+  transition:
+    opacity 560ms cubic-bezier(.22, 1, .36, 1) var(--motion-delay, 0ms),
+    transform 560ms cubic-bezier(.22, 1, .36, 1) var(--motion-delay, 0ms),
+    box-shadow 220ms ease,
+    border-color 220ms ease,
+    background-color 220ms ease;
+}
+
+.motion-item:not(.is-visible) {
+  opacity: 0 !important;
+  transform: translate3d(0, 18px, 0) scale(.988) !important;
+  will-change: opacity, transform;
+}
+
+.motion-item.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+.landing-hero-img.is-visible,
+.farmer-welcome.is-visible {
+  animation: motion-arrive 800ms cubic-bezier(.22, 1, .36, 1) both;
+}
+
+.landing-sample {
+  animation: sample-float 5.5s ease-in-out 1s infinite;
+}
+
+.farmer-welcome::after {
+  animation: glow-drift 9s ease-in-out infinite alternate;
+  transform-origin: center;
+}
+
+.topnav-link,
+.topnav-login,
+.topnav-cta,
+.topnav-logout,
+.language-switch button,
+.topnav-burger,
+.farmer-primary-link,
+.farmer-secondary-link,
+.landing-btn-primary,
+.landing-btn-ghost {
+  transition:
+    color 180ms ease,
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 220ms ease,
+    transform 220ms cubic-bezier(.22, 1, .36, 1);
+}
+
+.topnav-link:hover,
+.topnav-login:hover,
+.topnav-cta:hover,
+.topnav-logout:hover,
+.farmer-primary-link:hover,
+.farmer-secondary-link:hover,
+.landing-btn-primary:hover,
+.landing-btn-ghost:hover {
+  transform: translateY(-2px);
+}
+
+.btn:not(:disabled),
+.btn-primary,
+.btn-secondary {
+  transition:
+    color 180ms ease,
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 220ms ease,
+    transform 180ms cubic-bezier(.22, 1, .36, 1);
+}
+
+.btn:active:not(:disabled),
+.topnav-cta:active,
+.landing-btn-primary:active {
+  transform: translateY(0) scale(.98);
+}
+
+input,
+select,
+textarea {
+  transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline-offset: 3px;
+}
+
+.topnav-mobile {
+  transform-origin: top center;
+  animation: menu-enter 220ms cubic-bezier(.22, 1, .36, 1) both;
+}
+
+.card,
+.about-card,
+.farmer-action-card,
+.farmer-workflow-step,
+.landing-audience-card,
+.landing-card,
+.kpi-card {
+  transition:
+    transform 260ms cubic-bezier(.22, 1, .36, 1),
+    box-shadow 260ms ease,
+    border-color 220ms ease,
+    background-color 220ms ease;
+}
+
+.about-card:hover,
+.farmer-action-card:hover,
+.farmer-workflow-step:hover,
+.landing-audience-card:hover,
+.landing-card:hover,
+.kpi-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 34px -20px rgba(12, 31, 20, .3);
+}
+
+.landing-hero-img img {
+  transition: transform 800ms cubic-bezier(.22, 1, .36, 1), filter 500ms ease;
+}
+
+.landing-hero-img:hover img {
+  transform: scale(1.035);
+  filter: saturate(1.04);
+}
+
+@keyframes motion-arrive {
+  from { opacity: 0; transform: translateY(14px) scale(.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes sample-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes glow-drift {
+  from { transform: translate3d(0, 0, 0) scale(.96); opacity: .72; }
+  to { transform: translate3d(-18px, 12px, 0) scale(1.08); opacity: 1; }
+}
+
+@keyframes menu-enter {
+  from { opacity: 0; transform: translateY(-8px) scaleY(.97); }
+  to { opacity: 1; transform: translateY(0) scaleY(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}

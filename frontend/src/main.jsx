@@ -13,6 +13,8 @@ import './farmer-home.css'
 import './register.css'
 import './report.css'
 import './polish.css'
+import './motion.css'
+import './hero-polish.css'
 import App from './App.jsx'
 
 createRoot(document.getElementById('root')).render(
