@@ -127,8 +127,13 @@ def calculate_decision(
     month = forecast["sale_month_name"]
     outlook = forecast["season_outlook"]
 
+    price_basis = (
+        f"Best available market: {best_market['market']} (modal ₹{best_market['modal_price']}/quintal; transport costs are not provided by the official feed)"
+        if best_market.get("transport_cost_per_quintal") is None
+        else f"Best available market: {best_market['market']} (modal ₹{best_market['modal_price']}/quintal, net ₹{best_market['net_price_per_quintal']}/quintal after estimated transport)"
+    )
     assumptions = [
-        f"Best available market: {best_market['market']} (modal ₹{best_market['modal_price']}/quintal, net ₹{best_market['net_price_per_quintal']}/quintal after transport)",
+        price_basis,
         f"Commission deducted: {int(commission_pct * 100)}% of sale price",
         f"Current estimated saleable quantity: {round(quantity_sellable_now, 1)} kg ({round(current_saleable_fraction*100,1)}% of {quantity_kg} kg)",
         f"Storage cost assumed: ₹{storage_cost_per_kg_per_day}/kg/day for {STORAGE_DISPLAY.get(storage_key, storage_key)} ({days} days = ₹{storage_total})",

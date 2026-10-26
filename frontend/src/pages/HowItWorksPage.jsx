@@ -29,7 +29,7 @@ const FARMER_STEPS = [
   {
     icon: ChartNoAxesCombined,
     title: 'Compare market options',
-    body: 'Sample mandi prices are combined with transport and commission assumptions to estimate net proceeds.',
+    body: 'Official feed prices are shown when available; clearly labeled prototype prices are used only as a fallback.',
   },
   {
     icon: Warehouse,
@@ -71,7 +71,7 @@ const ARCHITECTURE = [
   {
     icon: ChartNoAxesCombined,
     label: 'Market service',
-    detail: 'Bundled illustrative sample prices, not a live government feed',
+    detail: 'Official data.gov.in daily mandi prices with a labeled prototype fallback',
     className: 'how-architecture-engine',
   },
   {
@@ -96,10 +96,10 @@ export default function HowItWorksPage() {
           <div className="how-hero-copy">
             <span className="how-eyebrow"><Sprout size={15} /> CropShield workflow</span>
             <h1>From harvest details to a clearer next step.</h1>
-            <p>See how CropShield organizes crop-risk guidance, sample market information, and sell-or-store estimates in one reviewable flow.</p>
+            <p>See how CropShield organizes crop-risk guidance, mandi market information, and sell-or-store estimates in one reviewable flow.</p>
             <div className="how-hero-actions">
               <Link to="/auth" className="how-primary-link">Start a crop assessment <ArrowRight size={16} /></Link>
-              <Link to="/finder" className="how-secondary-link">Browse sample prices</Link>
+              <Link to="/finder" className="how-secondary-link">Browse mandi prices</Link>
             </div>
           </div>
           <div className="how-hero-visual">
@@ -185,7 +185,7 @@ export default function HowItWorksPage() {
 
         <aside className="how-honesty-note">
           <span className="how-honesty-icon"><ShieldAlert size={19} /></span>
-          <div><b>Important: estimates use prototype data and rules</b><p>Mandi prices are sample data, not live rates. Risk logic and price outlooks are not field-validated predictions. Check actual storage conditions and current local prices before acting.</p></div>
+          <div><b>Important: estimates use rules and source-labeled prices</b><p>Official feed prices are used when available; prototype samples are clearly labeled when the feed is unavailable. Risk logic and price outlooks are not field-validated predictions. Check actual storage conditions and current local prices before acting.</p></div>
         </aside>
       </div>
     </LocalizedContent>

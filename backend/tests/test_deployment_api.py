@@ -42,6 +42,14 @@ class DeploymentApiTests(unittest.TestCase):
         self.assertEqual(self.client.get("/health").json(), {"status": "ok"})
         self.assertEqual(self.client.get("/docs").status_code, 200)
 
+    def test_crop_endpoint_lists_at_least_ten_supported_crops(self):
+        response = self.client.get("/crops")
+
+        self.assertEqual(response.status_code, 200)
+        crops = response.json()["crops"]
+        self.assertGreaterEqual(len(crops), 10)
+        self.assertIn({"key": "mango", "display_name": "Mango"}, crops)
+
     def test_registration_enforces_password_strength_and_location(self):
         short_password = self.client.post(
             "/farmers/register",
@@ -87,6 +95,49 @@ class DeploymentApiTests(unittest.TestCase):
             self.client.get(f"/batches/{batch_id}", headers=other_headers).status_code,
             403,
         )
+
+    def test_dashboard_only_fetches_market_data_for_tracked_batches(self):
+        farmer = self.register("9000000006")
+        headers = {"Authorization": f"Bearer {farmer['token']}"}
+
+        with patch("main.get_market_prices") as get_prices:
+            empty_summary = self.client.get("/dashboard/summary", headers=headers)
+
+        self.assertEqual(empty_summary.status_code, 200, empty_summary.text)
+        self.assertEqual(empty_summary.json()["latest_prices"], {})
+        get_prices.assert_not_called()
+
+        batch = self.client.post(
+            "/batches",
+            headers=headers,
+            json={
+                "farmer_name": farmer["farmer"]["name"],
+                "crop": "tomato",
+                "quantity_kg": 250,
+                "harvest_date": "2026-10-16",
+                "location": "Igatpuri",
+                "state": "Maharashtra",
+                "district": "Nashik",
+                "storage_type": "open_room",
+            },
+        )
+        self.assertEqual(batch.status_code, 200, batch.text)
+
+        market_data = {
+            "markets": [{
+                "price_per_kg": 10,
+                "modal_price": 1000,
+                "market": "Nashik",
+                "price_date": "2026-10-17",
+            }],
+            "is_demo": True,
+        }
+        with patch("main.get_market_prices", return_value=market_data) as get_prices:
+            summary = self.client.get("/dashboard/summary", headers=headers)
+
+        self.assertEqual(summary.status_code, 200, summary.text)
+        get_prices.assert_called_once_with("tomato", "Nashik", "Maharashtra")
+        self.assertEqual(summary.json()["latest_prices"]["tomato"]["market"], "Nashik")
 
     def test_password_iterations_are_stored_for_future_verification(self):
         account = self.register("9000000005")

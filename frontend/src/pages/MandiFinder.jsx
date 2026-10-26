@@ -2,8 +2,6 @@ import { useState, useEffect } from 'react'
 import { getMarketPrices, getMarketMeta } from '../api'
 import { LocalizedContent, useLanguage } from '../i18n'
 
-const DEMO = 'DEMO DATA — Sample prices based on typical AGMARKNET ranges. Not live market data.'
-
 export default function MandiFinder() {
   const { language } = useLanguage()
   const [meta, setMeta] = useState(null)
@@ -111,7 +109,11 @@ export default function MandiFinder() {
             <button className="btn btn-primary" onClick={search} disabled={loading}>
               {loading ? 'Searching…' : 'Search Prices'}
             </button>
-            <span className="badge badge-demo">{DEMO}</span>
+            {results && (
+              <span className={`badge ${results.is_demo ? 'badge-demo' : 'badge-ok'}`}>
+                {results.is_demo ? 'DEMO FALLBACK' : 'OFFICIAL DATA'}
+              </span>
+            )}
           </div>
         </div>
       </div>
@@ -159,7 +161,7 @@ export default function MandiFinder() {
                       <th className="text-right">Min (₹/qtl)</th>
                       <th className="text-right">Max (₹/qtl)</th>
                       <th className="text-right">Modal (₹/qtl)</th>
-                      <th className="text-right">Net* (₹/qtl)</th>
+                      <th className="text-right">{results.is_demo ? 'Net* (₹/qtl)' : 'Modal / gross (₹/qtl)'}</th>
                       <th className="text-right">Arrivals (t)</th>
                     </tr>
                   </thead>
@@ -174,9 +176,9 @@ export default function MandiFinder() {
                         <td className="text-right tabnum td-muted">{m.max_price}</td>
                         <td className="text-right tabnum strong">{m.modal_price}</td>
                         <td className="text-right tabnum strong" style={{ color: 'var(--primary)' }}>
-                          {m.net_price_per_quintal}
+                          {results.is_demo ? m.net_price_per_quintal : m.modal_price}
                         </td>
-                        <td className="text-right tabnum td-muted">{m.arrivals_tonnes}</td>
+                        <td className="text-right tabnum td-muted">{m.arrivals_tonnes ?? '—'}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -195,8 +197,10 @@ export default function MandiFinder() {
                     <li><strong>Price date:</strong> {foundMarkets[0]?.price_date}</li>
                     <li><strong>Source:</strong> {foundMarkets[0]?.source}</li>
                     <li><strong>Unit:</strong> ₹ per quintal (100 kg)</li>
-                    <li><strong>*Net price</strong> = modal price minus estimated transport cost</li>
-                    <li><strong>Arrivals:</strong> tonnes reported at the market</li>
+                    {results.is_demo
+                      ? <li><strong>*Net price</strong> = modal price minus estimated transport cost</li>
+                      : <li>Official feed does not include transport costs; displayed modal price is gross, before expenses.</li>}
+                    <li><strong>Arrivals:</strong> {results.is_demo ? 'tonnes reported at the market' : 'not supplied by this feed'}</li>
                   </ul>
                 </div>
                 <div>
@@ -207,9 +211,8 @@ export default function MandiFinder() {
                     charges to estimate your take-home price.
                   </div>
                   <div className="alert alert-warn">
-                    These are <strong>sample prices</strong> for demonstration.
-                    Live data is available from{' '}
-                    <a href="https://agmarknet.gov.in" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--info-text)', fontWeight: 500 }}>AGMARKNET</a>.
+                    {results.demo_notice}{' '}
+                    Visit <a href="https://agmarknet.gov.in" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--info-text)', fontWeight: 500 }}>AGMARKNET</a>.
                   </div>
                 </div>
               </div>
@@ -220,17 +223,25 @@ export default function MandiFinder() {
           {results.price_history?.length > 1 && (
             <div className="card">
               <div className="card-header">
-                <span className="card-title">{crop.charAt(0).toUpperCase() + crop.slice(1)} Price Trend — Last 14 Days</span>
+                <span className="card-title">{crop.charAt(0).toUpperCase() + crop.slice(1)} Monthly Price Samples</span>
                 <span className="badge badge-demo">DEMO</span>
               </div>
               <div className="card-body">
+                <div className="muted" style={{ fontSize: 12, marginBottom: 12 }}>
+                  {results.is_demo
+                    ? 'May–Sep 2026 · Illustrative crop-level samples, not location-specific · Monthly min/max/modal · ₹ per quintal'
+                    : 'Monthly range aggregated only from official feed records returned for this search · ₹ per quintal'}
+                </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                  {results.price_history.slice().reverse().map((h, i) => (
+                  {results.price_history.map((h, i) => (
                     <div key={i} style={{
-                      padding: '6px 12px', background: 'var(--bg)', border: '1px solid var(--border)',
-                      borderRadius: 'var(--r)', fontSize: 12, fontVariantNumeric: 'tabular-nums'
+                      padding: '10px 12px', background: 'var(--bg)', border: '1px solid var(--border)',
+                      borderRadius: 'var(--r)', fontSize: 12, fontVariantNumeric: 'tabular-nums',
+                      display: 'grid', gap: 4
                     }}>
-                      <span className="muted">{h.date.slice(5)}</span> · <span className="strong">₹{h.modal_price}</span>
+                      <span className="muted">{h.date.slice(0, 7)}</span>
+                      <span>Min ₹{h.min_price} · Max ₹{h.max_price}</span>
+                      <span className="strong">Modal ₹{h.modal_price}</span>
                     </div>
                   ))}
                 </div>

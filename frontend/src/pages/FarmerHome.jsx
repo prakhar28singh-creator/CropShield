@@ -141,7 +141,7 @@ export default function FarmerHome() {
         </div>
         <div className="farmer-data-note">
           <span className="farmer-data-note-mark">i</span>
-          <p><strong>A note on prices:</strong> Mandi prices are currently sample data. Use them as a guide, and verify with your local market before selling.</p>
+          <p><strong>A note on prices:</strong> CropShield uses official mandi-feed data when available; otherwise, prices are clearly labeled as prototype samples. Verify rates with your local market before selling.</p>
           <Link to="/finder">Browse prices <ArrowRight size={15} aria-hidden="true" /></Link>
         </div>
       </section>

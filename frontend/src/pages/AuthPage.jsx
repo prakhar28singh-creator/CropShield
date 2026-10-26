@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { registerFarmer, loginFarmer, getMarketMeta } from '../api'
 import { useAuth } from '../auth'
 import { LocalizedContent } from '../i18n'
@@ -13,6 +13,7 @@ export default function AuthPage() {
   const [busy, setBusy] = useState(false)
   const { login } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
 
   useEffect(() => {
     getMarketMeta()
@@ -38,7 +39,11 @@ export default function AuthPage() {
         ? await registerFarmer(form)
         : await loginFarmer({ phone: form.phone.trim(), password: form.password })
       login(res.data.token, res.data.farmer)
-      navigate('/register', { replace: true })
+      const requestedPage = location.state?.from
+      const destination = requestedPage
+        ? `${requestedPage.pathname}${requestedPage.search || ''}${requestedPage.hash || ''}`
+        : mode === 'register' ? '/register' : '/'
+      navigate(destination, { replace: true })
     } catch (err) {
       setError(err?.response?.data?.detail || 'Something went wrong. Please try again.')
     } finally {

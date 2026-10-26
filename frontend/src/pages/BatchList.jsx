@@ -8,11 +8,20 @@ export default function BatchList() {
   const { language } = useLanguage()
   const [batches, setBatches] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [retry, setRetry] = useState(0)
   const navigate = useNavigate()
 
   useEffect(() => {
-    getBatches().then(r => setBatches(r.data)).finally(() => setLoading(false))
-  }, [])
+    let active = true
+    getBatches()
+      .then(r => { if (active) setBatches(r.data) })
+      .catch(err => {
+        if (active) setError(err?.response?.data?.detail || 'Could not load your batches. Please try again.')
+      })
+      .finally(() => { if (active) setLoading(false) })
+    return () => { active = false }
+  }, [retry])
 
   const handleAssess = async (id) => {
     try { await assessBatch(id); navigate(`/batches/${id}/result`) }
@@ -36,8 +45,19 @@ export default function BatchList() {
         <Link to="/register" className="btn btn-primary">+ Register New Batch</Link>
       </div>
 
+      {error && (
+        <div className="alert alert-crit" role="alert" style={{ marginBottom: 16 }}>
+          {error}{' '}
+          <button className="link-btn" onClick={() => {
+            setError('')
+            setLoading(true)
+            setRetry(value => value + 1)
+          }}>Try again</button>
+        </div>
+      )}
+
       <div className="card">
-        {batches.length === 0 ? (
+        {error ? null : batches.length === 0 ? (
           <div className="card-body">
             <div className="empty-state">
               <div className="empty-icon">•</div>

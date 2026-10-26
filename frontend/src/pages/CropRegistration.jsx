@@ -17,6 +17,21 @@ const CONDITION_OPTIONS = [
   { value: 'moderate_damage', label: 'Moderate damage' },
   { value: 'severe_damage',   label: 'Severe damage' },
 ]
+const FALLBACK_CROPS = [
+  { key: 'tomato', display_name: 'Tomato' },
+  { key: 'potato', display_name: 'Potato' },
+  { key: 'onion', display_name: 'Onion' },
+  { key: 'wheat', display_name: 'Wheat' },
+  { key: 'rice', display_name: 'Rice' },
+  { key: 'maize', display_name: 'Maize' },
+  { key: 'chilli', display_name: 'Chilli' },
+  { key: 'brinjal', display_name: 'Brinjal' },
+  { key: 'cabbage', display_name: 'Cabbage' },
+  { key: 'cauliflower', display_name: 'Cauliflower' },
+  { key: 'okra', display_name: 'Okra' },
+  { key: 'mango', display_name: 'Mango' },
+  { key: 'banana', display_name: 'Banana' },
+]
 const TODAY = new Date().toISOString().split('T')[0]
 // Defined at module scope (NOT inside the page component) so React keeps the
 // same component identity across renders — an inner definition would remount
@@ -55,7 +70,7 @@ export default function CropRegistration() {
     setCropsLoading(true)
     getCrops()
       .then(r => { if (live) setCrops(r.data.crops) })
-      .catch(() => {})
+      .catch(() => { if (live) setCrops(FALLBACK_CROPS) })
       .finally(() => { if (live) setCropsLoading(false) })
     return () => { live = false }
   }, [])
@@ -174,12 +189,7 @@ export default function CropRegistration() {
                   {cropsLoading
                     ? <div className="reg-skel" style={{ height: 46 }} />
                     : <select id="crop" value={form.crop} onChange={e => set('crop', e.target.value)}>
-                      {(crops.length ? crops : [
-                      { key: 'tomato', display_name: 'Tomato' },
-                      { key: 'potato', display_name: 'Potato' },
-                      { key: 'onion',  display_name: 'Onion'  },
-                      { key: 'wheat',  display_name: 'Wheat'  },
-                    ]).map(c => <option key={c.key} value={c.key}>{c.display_name}</option>)}
+                      {crops.map(c => <option key={c.key} value={c.key}>{c.display_name}</option>)}
                   </select>
                   }
                 </Field>

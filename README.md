@@ -12,15 +12,23 @@ sell-versus-store options.
 ## What the app does
 
 - Public mandi price finder with state and district filters.
+- Crop selection for 13 crops across crop registration and mandi search.
 - Farmer accounts and crop batch records.
 - Rules-based storage risk assessment and sell-or-store calculations.
 - State and district selectors for all 36 Indian states and union territories.
 
 ## Important limitations
 
-- **Mandi prices are demo data**, not live market quotes. They are illustrative
-  sample values based on typical AGMARKNET ranges. Always confirm prices with
-  the market before making a selling decision.
+- Mandi prices use the data.gov.in AGMARKNET resource when
+  `DATA_GOV_IN_API_KEY` is configured on the backend and the feed returns usable
+  records. If the key is missing, the request fails, or the response cannot be
+  parsed, CropShield clearly labels and uses prototype sample data. A
+  successful feed response with no matching records stays empty; it is not
+  filled with fake prices.
+- **Prototype fallback prices are synthetic**, not historical market quotes.
+  Their five-month crop-level min/max/modal series is bundled in
+  `backend/data/crop_monthly_price_samples.csv`; always verify prices with the
+  market before making a selling decision.
 - Risk scores and forecasts are guidance based on transparent rules and demo
   inputs. They are not field-validated predictions, professional agricultural
   advice, or guarantees against crop loss.
@@ -72,6 +80,18 @@ The API is available at `http://127.0.0.1:8000`. During development, interactive
 API documentation is at `http://127.0.0.1:8000/docs`; production disables it by
 default.
 
+For local backend configuration, copy `backend/.env.example` to
+`backend/.env` and set `DATA_GOV_IN_API_KEY` there. The backend loads this file
+at startup. Never commit `backend/.env` or expose the key through a `VITE_*`
+frontend variable. For deployment, add `DATA_GOV_IN_API_KEY` in your backend
+host's environment-variable or secret settings instead of adding it to a file
+in the repository.
+
+With the key configured, the backend queries the official resource over HTTPS.
+If the request fails or its response is unusable, it falls back to the clearly
+labeled prototype dataset. A successful response with no matching records
+remains empty and is not filled with fake prices.
+
 ### 2. Start the frontend
 
 ```powershell
@@ -104,6 +124,7 @@ inside the backend container. Configure the service as follows:
 | `CROPSHIELD_DB_PATH` | `/data/cropshield.db` |
 | Persistent storage mount | `/data` |
 | `CORS_ORIGINS` | Your exact Vercel production origin(s), comma-separated; set after you know the Vercel domain |
+| `DATA_GOV_IN_API_KEY` | Your data.gov.in key, added as a secret environment variable |
 
 Ensure the mounted `/data` directory is writable by the container's non-root
 user (UID `10001`). The included Dockerfile starts Uvicorn on `0.0.0.0:8000`.
@@ -223,15 +244,22 @@ Production API documentation is disabled. For local development, open
 | `backend/main.py` | FastAPI routes, authentication, and startup |
 | `backend/database.py` | SQLite connection, initialization, and migrations |
 | `backend/india_locations.json` | Bundled Indian state/district dataset |
-| `backend/market_data.py` | Clearly labeled sample mandi prices and metadata |
+| `backend/market_data.py` | Sample mandi prices and metadata |
+| `backend/data/crop_monthly_price_samples.csv` | Five months of synthetic min/max/modal prices for 13 crops |
+| `backend/.env.example` | Backend API-key configuration template |
 | `backend/risk_engine.py` | Rules-based crop/storage risk assessment |
 | `backend/decision_engine.py` | Sell-versus-store calculations |
 | `backend/Dockerfile` | Container image for separately hosted API |
 
 ## Data and model notes
 
-Mandi price displays are **DEMO DATA** based on typical AGMARKNET ranges; they
-are not fetched from a live government API. No API key is required.
+The backend requests the data.gov.in current daily mandi-price resource
+(`9ef84268-d588-465a-a308-a864a43d0070`) over HTTPS. Configure
+`DATA_GOV_IN_API_KEY` in the backend host's secret/environment-variable
+settings. `DATA_GOV_IN_RESOURCE_ID` can optionally override the default
+resource. The browser never receives the key. If the official request fails,
+the API falls back to labeled sample prices; if it succeeds but returns no
+matching market rows, the result remains empty instead of showing samples.
 
 The bundled location snapshot contains 36 states and union territories and 784
 districts. It was obtained from the
@@ -246,3 +274,8 @@ temperature, humidity, storage duration/type, and visible crop condition. Price
 outlooks and financial comparisons are illustrative. They have not been
 validated against field outcomes and should not be treated as guaranteed
 predictions or financial advice.
+
+Crop profiles currently cover tomato, potato, onion, wheat, rice, maize, chilli,
+brinjal, cabbage, cauliflower, okra, mango, and banana. Crops without curated
+market rows receive clearly labeled deterministic sample prices for the chosen
+location; these are not live market data.

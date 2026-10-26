@@ -42,22 +42,42 @@ export default function Dashboard() {
   const [priceData, setPriceData] = useState({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [retry, setRetry] = useState(0)
   const navigate = useNavigate()
 
   useEffect(() => {
-    Promise.all([
-      getDashboardSummary(),
-      getBatches(),
+    let active = true
+    Promise.all([getDashboardSummary(), getBatches()])
+      .then(([s, b]) => {
+        if (!active) return
+        setSummary(s.data)
+        setBatches(b.data)  // keep full list for KPI totals; table renders top 5
+        setLoading(false)
+      })
+      .catch(err => {
+        if (active) {
+          setError(err?.response?.data?.detail || 'Could not load your dashboard. Please try again.')
+          setLoading(false)
+        }
+      })
+
+    Promise.allSettled([
       getMarketPrices('tomato'),
       getMarketPrices('onion'),
       getMarketPrices('potato'),
-    ]).then(([s, b, tomato, onion, potato]) => {
-      setSummary(s.data)
-      setBatches(b.data)  // keep full list for KPI totals; table renders top 5
-      setPriceData({ tomato: tomato.data, onion: onion.data, potato: potato.data })
-    }).catch(() => setError('Cannot reach the backend. Make sure the server is running on port 8000.'))
-      .finally(() => setLoading(false))
-  }, [])
+    ]).then(results => {
+      if (!active) return
+      const crops = ['tomato', 'onion', 'potato']
+      const nextPrices = Object.fromEntries(
+        results.flatMap((result, index) => result.status === 'fulfilled'
+          ? [[crops[index], result.value.data]]
+          : [])
+      )
+      setPriceData(nextPrices)
+    })
+
+    return () => { active = false }
+  }, [retry])
 
   const handleAssess = async (id) => {
     try { await assessBatch(id); navigate(`/batches/${id}/result`) }
@@ -76,7 +96,14 @@ export default function Dashboard() {
   if (error) return (
     <LocalizedContent>
     <div className="page-body">
-      <div className="alert alert-crit" style={{ marginTop: 40 }}>{error}</div>
+      <div className="alert alert-crit" role="alert" style={{ marginTop: 40 }}>
+        {error}{' '}
+        <button className="link-btn" onClick={() => {
+          setError(null)
+          setLoading(true)
+          setRetry(value => value + 1)
+        }}>Try again</button>
+      </div>
     </div>
     </LocalizedContent>
   )
@@ -124,7 +151,7 @@ export default function Dashboard() {
   }
   if (bestPrice) {
     insights.push({
-      level: 'tone-ok', ico: '3', title: 'Best mandi price today',
+      level: 'tone-ok', ico: '3', title: 'Best available mandi price',
       body: <><b style={{ textTransform: 'capitalize' }}>{bestPrice.crop}</b> is at <b>₹{bestPrice.price}/qtl</b> in {bestPrice.market}. Worth prioritising if you hold this crop.</>,
     })
   }
@@ -210,7 +237,7 @@ export default function Dashboard() {
 
         <div className="kpi-card kpi-neutral">
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12 }}>
-            <div className="kpi-label">Best Price Today</div>
+            <div className="kpi-label">Best Available Price</div>
             <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--surface-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15 }}>₹</div>
           </div>
           <div className="kpi-value" style={{ fontSize: 22, textTransform: 'capitalize' }}>
@@ -245,13 +272,15 @@ export default function Dashboard() {
         <div className="card">
           <div className="card-header">
             <span className="card-title">Mandi Price Trends</span>
-            <span className="badge badge-demo">DEMO DATA</span>
+            <span className={`badge ${priceData.tomato?.is_demo ? 'badge-demo' : 'badge-ok'}`}>
+              {priceData.tomato?.is_demo ? 'DEMO FALLBACK' : 'OFFICIAL DATA'}
+            </span>
           </div>
           <div className="card-body">
             {tomatoHistory.length > 1 ? (
               <>
                 <div style={{ fontSize: 12, color: 'var(--text-2)', marginBottom: 10 }}>
-                  Tomato modal price — last 14 days (₹/quintal)
+                  Tomato modal price — {priceData.tomato?.is_demo ? 'prototype sample history' : 'official feed records'} (₹/quintal)
                 </div>
                 <ResponsiveContainer width="100%" height={180}>
                   <AreaChart data={tomatoHistory} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
@@ -272,7 +301,7 @@ export default function Dashboard() {
                 {onionHistory.length > 1 && (
                   <>
                     <div style={{ fontSize: 12, color: 'var(--text-2)', margin: '14px 0 10px' }}>
-                      Onion modal price — last 14 days (₹/quintal)
+                      Onion modal price — {priceData.onion?.is_demo ? 'prototype sample history' : 'official feed records'} (₹/quintal)
                     </div>
                     <ResponsiveContainer width="100%" height={120}>
                       <AreaChart data={onionHistory} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
@@ -383,7 +412,9 @@ export default function Dashboard() {
         <div className="card" style={{ marginBottom: 16 }}>
           <div className="card-header">
             <span className="card-title">Modal Price Comparison by Crop</span>
-            <span className="badge badge-demo">DEMO DATA</span>
+            <span className={`badge ${Object.values(prices).some(info => info.is_demo) ? 'badge-demo' : 'badge-ok'}`}>
+              {Object.values(prices).some(info => info.is_demo) ? 'DEMO FALLBACK' : 'OFFICIAL DATA'}
+            </span>
           </div>
           <div className="card-body">
             <ResponsiveContainer width="100%" height={160}>

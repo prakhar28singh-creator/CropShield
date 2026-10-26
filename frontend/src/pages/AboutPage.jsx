@@ -32,7 +32,7 @@ export default function AboutPage() {
         <section className="about-hero">
           <div className="auth-eyebrow">ABOUT CROPSHIELD</div>
           <h1>Know your options after the harvest.</h1>
-          <p>CropShield brings crop-condition checks, storage guidance, and mandi-price comparisons together so farmers can review practical next steps. Risk scores use transparent rules, and mandi prices are sample data today.</p>
+          <p>CropShield brings crop-condition checks, storage guidance, and mandi-price comparisons together so farmers can review practical next steps. It uses official market-feed prices when available and clearly labels prototype samples used as a fallback.</p>
           <div className="about-cta">
             <Link to="/how-it-works" className="topnav-cta about-primary-link">See how it works <ArrowRight size={16} /></Link>
             <Link to="/finder" className="topnav-login about-secondary-link">Check mandi prices</Link>
@@ -51,7 +51,7 @@ export default function AboutPage() {
 
         <aside className="about-scope-note">
           <b>Prototype scope</b>
-          <p>CropShield is a decision-support prototype. Prices are illustrative, and risk guidance has not been validated against field outcomes. Confirm local conditions and market rates before acting.</p>
+          <p>CropShield is a decision-support prototype. Fallback prices are illustrative, and risk guidance has not been validated against field outcomes. Confirm local conditions and market rates before acting.</p>
         </aside>
       </div>
     </LocalizedContent>

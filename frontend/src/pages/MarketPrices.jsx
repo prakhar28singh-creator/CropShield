@@ -6,12 +6,13 @@ import {
   ResponsiveContainer, Legend
 } from 'recharts'
 
-const CROPS = ['tomato', 'potato', 'onion', 'wheat']
+const CROPS = ['tomato', 'potato', 'onion', 'wheat', 'rice', 'maize', 'chilli', 'brinjal', 'cabbage', 'cauliflower', 'okra', 'mango', 'banana']
 
 export default function MarketPrices() {
   const [crop, setCrop] = useState('tomato')
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
+
   useEffect(() => {
     getMarketPrices(crop)
       .then(r => setData(r.data))
@@ -46,7 +47,11 @@ export default function MarketPrices() {
             Mandi wholesale prices across markets — select a crop to compare
           </div>
         </div>
-        <span className="badge badge-demo">DEMO DATA — Not live prices</span>
+        {data && (
+          <span className={`badge ${data.is_demo ? 'badge-demo' : 'badge-ok'}`}>
+            {data.is_demo ? 'DEMO FALLBACK' : 'OFFICIAL DATA'}
+          </span>
+        )}
       </div>
 
       {/* Crop selector */}
@@ -87,8 +92,8 @@ export default function MarketPrices() {
                     <th className="text-right">Min (₹/qtl)</th>
                     <th className="text-right">Max (₹/qtl)</th>
                     <th className="text-right">Modal (₹/qtl)</th>
-                    <th className="text-right">Transport</th>
-                    <th className="text-right">Net Price</th>
+                    <th className="text-right">{data?.is_demo ? 'Transport' : 'Transport (not provided)'}</th>
+                    <th className="text-right">{data?.is_demo ? 'Net Price' : 'Modal / gross price'}</th>
                     <th className="text-right">Arrivals (t)</th>
                   </tr>
                 </thead>
@@ -101,11 +106,11 @@ export default function MarketPrices() {
                       <td className="text-right tabnum td-muted">{m.min_price}</td>
                       <td className="text-right tabnum td-muted">{m.max_price}</td>
                       <td className="text-right tabnum strong">{m.modal_price}</td>
-                      <td className="text-right tabnum td-muted">{m.transport_cost_per_quintal}</td>
+                      <td className="text-right tabnum td-muted">{m.transport_cost_per_quintal ?? '—'}</td>
                       <td className="text-right tabnum strong" style={{ color:'var(--primary)' }}>
-                        {m.net_price_per_quintal}
+                        {data?.is_demo ? m.net_price_per_quintal : m.modal_price}
                       </td>
-                      <td className="text-right tabnum td-muted">{m.arrivals_tonnes}</td>
+                      <td className="text-right tabnum td-muted">{m.arrivals_tonnes ?? '—'}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -115,7 +120,9 @@ export default function MarketPrices() {
             {/* Bar chart */}
             {barData.length > 0 && (
               <div style={{ padding:'16px 20px 4px' }}>
-                <div className="section-label" style={{ marginBottom:10 }}>Modal vs Net Price by Market</div>
+                <div className="section-label" style={{ marginBottom:10 }}>
+                  {data?.is_demo ? 'Modal vs Net Price by Market' : 'Official Modal Price by Market'}
+                </div>
                 <ResponsiveContainer width="100%" height={200}>
                   <BarChart data={barData} margin={{ top:0, right:16, left:0, bottom:0 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
@@ -127,7 +134,7 @@ export default function MarketPrices() {
                     />
                     <Legend wrapperStyle={{ fontSize:12, color:'var(--text-2)' }} />
                     <Bar dataKey="Modal" fill="#276749" radius={[3,3,0,0]} />
-                    <Bar dataKey="Net" fill="#93d4af" radius={[3,3,0,0]} />
+                    {data?.is_demo && <Bar dataKey="Net" name="Net after estimated transport" fill="#93d4af" radius={[3,3,0,0]} />}
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -138,7 +145,7 @@ export default function MarketPrices() {
           {history.length > 1 && (
             <div className="card" style={{ marginBottom:16 }}>
               <div className="card-header">
-                <span className="card-title">Price Trend — Last 14 Days</span>
+                <span className="card-title">{data?.is_demo ? 'Price Trend — Last 5 Months' : 'Official Price Trend'}</span>
               </div>
               <div className="card-body">
                 <ResponsiveContainer width="100%" height={180}>
@@ -195,7 +202,7 @@ export default function MarketPrices() {
           )}
           {/* Data source notice */}
           <div className="alert alert-info">
-            {data?.demo_notice} Official mandi data is available on{' '}
+            {data?.demo_notice}{' '}
             <a href="https://agmarknet.gov.in" target="_blank" rel="noopener noreferrer" style={{ color:'var(--info-text)', fontWeight:500 }}>
               AGMARKNET
             </a>{' '}and the{' '}

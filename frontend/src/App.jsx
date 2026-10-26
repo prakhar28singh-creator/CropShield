@@ -29,8 +29,9 @@ const PAGE_META = {
 
 function RequireFarmer({ children }) {
   const { farmer, ready } = useAuth()
+  const location = useLocation()
   if (!ready) return <LocalizedContent><div className="page-body loading-center"><div className="spinner"></div><span>Checking login…</span></div></LocalizedContent>
-  if (!farmer) return (<Navigate to="/auth" replace />)
+  if (!farmer) return (<Navigate to="/auth" replace state={{ from: location }} />)
   return <>{children}</>
 }
 

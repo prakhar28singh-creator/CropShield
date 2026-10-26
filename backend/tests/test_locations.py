@@ -1,13 +1,23 @@
 import sqlite3
 import tempfile
 import unittest
+import os
 from pathlib import Path
+from unittest.mock import patch
 
 import database
 from market_data import get_market_meta, get_market_prices, is_valid_location
+from risk_engine import CROP_PROFILES
 
 
 class LocationDataTests(unittest.TestCase):
+    def setUp(self):
+        self.api_key_patch = patch.dict(os.environ, {"DATA_GOV_IN_API_KEY": ""})
+        self.api_key_patch.start()
+
+    def tearDown(self):
+        self.api_key_patch.stop()
+
     def test_metadata_contains_all_states_and_union_territories(self):
         states = get_market_meta()["states"]
 
@@ -31,6 +41,26 @@ class LocationDataTests(unittest.TestCase):
         self.assertTrue(all(market["district"] == "Dhemaji" for market in result["markets"]))
         self.assertTrue(all("Sample data" in market["source"] for market in result["markets"]))
         self.assertIn("DEMO", result["demo_notice"])
+
+    def test_crop_catalogue_has_profiles_and_sample_prices_for_every_crop(self):
+        crops = get_market_meta()["crops"]
+
+        self.assertGreaterEqual(len(crops), 10)
+        self.assertEqual({crop["key"] for crop in crops}, set(CROP_PROFILES))
+        for crop in crops:
+            with self.subTest(crop=crop["key"]):
+                result = get_market_prices(crop["key"], district="Nashik", state="Maharashtra")
+                self.assertTrue(result["markets"])
+                self.assertTrue(all("Sample data" in market["source"] for market in result["markets"]))
+                self.assertIn("DEMO", result["demo_notice"])
+                self.assertEqual(len(result["price_history"]), 5)
+                self.assertEqual(
+                    [point["date"][:7] for point in result["price_history"]],
+                    ["2026-05", "2026-06", "2026-07", "2026-08", "2026-09"],
+                )
+                for point in result["price_history"]:
+                    self.assertLessEqual(point["min_price"], point["modal_price"])
+                    self.assertLessEqual(point["modal_price"], point["max_price"])
 
     def test_existing_database_migrates_location_columns(self):
         original_db_path = database.DB_PATH

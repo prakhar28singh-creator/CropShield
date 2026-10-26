@@ -208,7 +208,9 @@ export default function AssessmentResult() {
       <div className="card" style={{ marginBottom:16 }}>
         <div className="card-header">
           <span className="card-title">Market Price Comparison</span>
-          <span className="badge badge-demo">DEMO DATA</span>
+          <span className={`badge ${market_prices?.is_demo ? 'badge-demo' : 'badge-ok'}`}>
+            {market_prices?.is_demo ? 'DEMO FALLBACK' : 'OFFICIAL DATA'}
+          </span>
         </div>
         <div className="card-body">
           <div className="table-wrap" style={{ marginBottom:16 }}>
@@ -219,8 +221,8 @@ export default function AssessmentResult() {
                   <th>Market</th>
                   <th>State</th>
                   <th className="text-right">Modal (₹/qtl)</th>
-                  <th className="text-right">Transport (₹/qtl)</th>
-                  <th className="text-right">Net (₹/qtl)</th>
+                  <th className="text-right">{market_prices?.is_demo ? 'Transport (₹/qtl)' : 'Transport (not provided)'}</th>
+                  <th className="text-right">{market_prices?.is_demo ? 'Net (₹/qtl)' : 'Modal / gross (₹/qtl)'}</th>
                   <th className="text-right">Distance</th>
                 </tr>
               </thead>
@@ -231,11 +233,11 @@ export default function AssessmentResult() {
                     <td className="strong">{m.market}</td>
                     <td className="td-muted">{m.state}</td>
                     <td className="text-right tabnum">{m.modal_price}</td>
-                    <td className="text-right tabnum td-muted">{m.transport_cost_per_quintal}</td>
+                    <td className="text-right tabnum td-muted">{m.transport_cost_per_quintal ?? '—'}</td>
                     <td className="text-right tabnum strong" style={{ color:'var(--primary)' }}>
-                      {m.net_price_per_quintal}
+                      {market_prices?.is_demo ? m.net_price_per_quintal : m.modal_price}
                     </td>
-                    <td className="text-right tabnum td-muted">{m.distance_km} km</td>
+                    <td className="text-right tabnum td-muted">{m.distance_km == null ? '—' : `${m.distance_km} km`}</td>
                   </tr>
                 ))}
               </tbody>
@@ -244,7 +246,9 @@ export default function AssessmentResult() {
 
           {history.length > 1 && (
             <div>
-              <div className="section-label" style={{ marginBottom:8 }}>Price Trend — Last 14 Days</div>
+              <div className="section-label" style={{ marginBottom:8 }}>
+                {market_prices?.is_demo ? 'Price Trend — Last 5 Months' : 'Official Price Trend'}
+              </div>
               <ResponsiveContainer width="100%" height={160}>
                 <LineChart data={history} margin={{ top:4, right:16, left:0, bottom:4 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
@@ -259,6 +263,7 @@ export default function AssessmentResult() {
           )}
 
           <div style={{ marginTop:12, fontSize:11, color:'var(--text-3)', borderTop:'1px solid var(--border)', paddingTop:10 }}>
+            {market_prices?.demo_notice}{' '}
             Wholesale mandi price ≠ farmer take-home. Deduct commission (6–10%), weighing, loading, and transport charges from modal price.
           </div>
         </div>

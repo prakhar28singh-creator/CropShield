@@ -4,7 +4,9 @@ import json
 import os
 import secrets
 from datetime import datetime, date, timezone
+from pathlib import Path
 from typing import Optional
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
@@ -14,6 +16,8 @@ from models import BatchCreate, BatchResponse, AssessmentResponse
 from risk_engine import assess_risk, CROP_PROFILES, calculate_storage_days
 from market_data import get_market_prices, get_market_meta, is_valid_location
 from decision_engine import calculate_decision
+
+load_dotenv(Path(__file__).with_name(".env"))
 
 IS_PRODUCTION = os.getenv("APP_ENV", "development").lower() == "production"
 ENABLE_API_DOCS = os.getenv("ENABLE_API_DOCS", str(not IS_PRODUCTION)).lower() in {"1", "true", "yes"}
@@ -384,11 +388,13 @@ def dashboard_summary(authorization: Optional[str] = Header(default=None)):
         ).fetchall()
         total_batches = len(batches)
 
-        # Re-run risk fresh for each batch (dates move over time, stale scores are wrong)
+        # Re-run risk fresh for each batch (dates move over time, stale scores are wrong).
+        # Only request market data for crops and locations this farmer actually tracks.
         high_risk = 0
         medium_risk = 0
         total_at_risk_kg = 0.0
         total_loss_inr = 0.0
+        tracked_prices = {}
 
         for b in batches:
             batch = dict(b)
@@ -401,7 +407,16 @@ def dashboard_summary(authorization: Optional[str] = Header(default=None)):
                 quantity_kg=batch["quantity_kg"],
                 visible_condition=batch["visible_condition"] or "fresh",
             )
-            prices = get_market_prices(batch["crop"], batch["district"], batch.get("state") or None)
+            price_key = (
+                batch["crop"],
+                batch["district"],
+                batch.get("state") or "",
+            )
+            if price_key not in tracked_prices:
+                tracked_prices[price_key] = get_market_prices(
+                    batch["crop"], batch["district"], batch.get("state") or None
+                )
+            prices = tracked_prices[price_key]
             price_per_kg = prices["markets"][0]["price_per_kg"] if prices["markets"] else 10.0
             loss_value = risk["quantity_at_risk_kg"] * price_per_kg
 
@@ -414,12 +429,13 @@ def dashboard_summary(authorization: Optional[str] = Header(default=None)):
             total_loss_inr += loss_value
 
         latest_prices = {}
-        for crop in CROP_PROFILES:
-            p = get_market_prices(crop)
-            if p["markets"]:
+        for (crop, _, _), prices in tracked_prices.items():
+            if prices["markets"] and crop not in latest_prices:
                 latest_prices[crop] = {
-                    "modal_price": p["markets"][0]["modal_price"],
-                    "market": p["markets"][0]["market"],
+                    "modal_price": prices["markets"][0]["modal_price"],
+                    "market": prices["markets"][0]["market"],
+                    "price_date": prices["markets"][0]["price_date"],
+                    "is_demo": prices["is_demo"],
                 }
 
         return {

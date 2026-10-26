@@ -1,6 +1,7 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../auth'
+import { getMarketPrices } from '../api'
 import FarmerHome from './FarmerHome'
 import { LocalizedContent } from '../i18n'
 
@@ -14,16 +15,9 @@ const BENEFITS = [
 const STEPS = [
   { icon: 'plant', title: 'Enter crop details', body: 'Add the crop, harvest date and storage conditions.' },
   { icon: 'search', title: 'Review crop risk', body: 'See a spoilage-risk estimate and storage guidance.' },
-  { icon: 'chart', title: 'Compare mandi prices', body: 'Explore sample prices across crops and locations.' },
+  { icon: 'chart', title: 'Compare mandi prices', body: 'Explore available prices across crops and locations.' },
   { icon: 'calculator', title: 'Check your options', body: 'Compare selling now with a storage scenario.' },
   { icon: 'person', title: 'Save and track', body: 'Create an account to keep your batches and reports.' },
-]
-
-const PRICES = [
-  { crop: 'Tomato', market: 'Nashik, Maharashtra', min: '₹1,200', max: '₹1,800', modal: '₹1,500' },
-  { crop: 'Potato', market: 'Indore, Madhya Pradesh', min: '₹1,000', max: '₹1,500', modal: '₹1,250' },
-  { crop: 'Onion', market: 'Pune, Maharashtra', min: '₹1,400', max: '₹2,100', modal: '₹1,750' },
-  { crop: 'Chilli', market: 'Guntur, Andhra Pradesh', min: '₹2,800', max: '₹3,600', modal: '₹3,200' },
 ]
 
 function Icon({ name, size = 22 }) {
@@ -61,6 +55,36 @@ function Icon({ name, size = 22 }) {
 export default function Home() {
   const { farmer } = useAuth()
   const location = useLocation()
+  const [priceRows, setPriceRows] = useState([])
+  const [priceSource, setPriceSource] = useState(null)
+
+  useEffect(() => {
+    if (farmer) return undefined
+    let cancelled = false
+    Promise.all(['tomato', 'potato', 'onion', 'chilli'].map(crop => getMarketPrices(crop)))
+      .then(responses => {
+        if (cancelled) return
+        setPriceRows(responses.flatMap(({ data }, index) => {
+          const market = data.markets?.[0]
+          if (!market) return []
+          return [{
+            crop: ['Tomato', 'Potato', 'Onion', 'Chilli'][index],
+            market: `${market.market}, ${market.state}`,
+            min: market.min_price,
+            max: market.max_price,
+            modal: market.modal_price,
+            date: market.price_date,
+          }]
+        }))
+        setPriceSource(responses.some(({ data }) => data.is_demo) ? 'demo' : 'official')
+      })
+      .catch(() => {
+        if (!cancelled) setPriceSource('unavailable')
+      })
+    return () => { cancelled = true }
+  }, [farmer])
+
+  const tomatoPreview = priceRows.find(row => row.crop === 'Tomato')
 
   useEffect(() => {
     if (location.hash !== '#how-it-works') return
@@ -110,16 +134,25 @@ export default function Home() {
               <span><Icon name="person" size={15} /> Sign in to save crop batches and assessments</span>
             </div>
           </div>
-          <div className="landing-reference-preview" aria-label="Illustrative sample crop assessment">
+          <div className="landing-reference-preview" aria-label="Tomato mandi price snapshot">
             <div className="landing-reference-preview-top">
               <span className="landing-reference-icon"><Icon name="coins" size={18} /></span>
-              <span><b>Sample crop outlook</b><small>Illustrative values · not live prices</small></span>
-              <span className="landing-reference-badge">DEMO</span>
+              <span>
+                <b>{priceSource === 'official' ? 'Tomato market snapshot' : 'Tomato price snapshot'}</b>
+                <small>{tomatoPreview?.market || 'Latest available mandi record'}</small>
+              </span>
+              {priceSource && <span className="landing-reference-badge">{priceSource === 'official' ? 'OFFICIAL' : priceSource === 'demo' ? 'DEMO' : 'OFFLINE'}</span>}
             </div>
-            <div className="landing-reference-preview-crop">Tomato <span>·</span> 100 kg</div>
-            <div className="landing-reference-preview-row"><span>Sell today</span><b>₹1,965</b></div>
-            <div className="landing-reference-preview-row"><span>Store for 7 days</span><b>₹2,186</b></div>
-            <div className="landing-reference-preview-verdict"><Icon name="shield" size={16} /> Review storage risk before deciding</div>
+            <div className="landing-reference-preview-crop">Tomato <span>·</span> ₹ per quintal</div>
+            <div className="landing-reference-preview-row">
+              <span>Market price range</span>
+              <b>{tomatoPreview ? `₹${Number(tomatoPreview.min).toLocaleString('en-IN')}–₹${Number(tomatoPreview.max).toLocaleString('en-IN')}` : '—'}</b>
+            </div>
+            <div className="landing-reference-preview-row">
+              <span>Modal price · {tomatoPreview?.date || 'no date'}</span>
+              <b>{tomatoPreview ? `₹${Number(tomatoPreview.modal).toLocaleString('en-IN')}` : '—'}</b>
+            </div>
+            <div className="landing-reference-preview-verdict"><Icon name="shield" size={16} /> Confirm the arrival date before deciding</div>
           </div>
           <div className="landing-hero-cards" aria-label="CropShield tools">
             <article className="landing-hero-tool landing-hero-tool-prices">
@@ -160,7 +193,7 @@ export default function Home() {
             <h2>Support for the crops you grow</h2>
           </div>
           <div className="landing-crop-list">
-            {['Tomato', 'Potato', 'Onion', 'Chilli', 'Brinjal'].map((crop, index) => (
+            {['Tomato', 'Potato', 'Onion', 'Wheat', 'Rice', 'Maize', 'Chilli', 'Brinjal', 'Mango', 'Banana'].map((crop, index) => (
               <span className="landing-crop" key={crop}><span className={`landing-crop-dot crop-${index + 1}`} />{crop}</span>
             ))}
             <span className="landing-crops-more">More crops available</span>
@@ -218,26 +251,57 @@ export default function Home() {
           <div className="landing-market-copy">
             <span className="landing-section-eyebrow"><Icon name="coins" size={15} /> Mandi price explorer</span>
             <h2>Compare markets. Plan your next move.</h2>
-            <p>Explore crop prices by state, district and mandi. Current prices shown in CropShield are sample data, not live market rates.</p>
+            <p>Explore crop prices by state, district and mandi. CropShield uses official feed records when available and clearly labels prototype fallback prices.</p>
             <Link to="/finder" className="landing-reference-primary">View mandi prices <Icon name="arrow" size={16} /></Link>
           </div>
           <div className="landing-price-card">
             <div className="landing-price-card-top">
-              <div><span className="landing-price-pulse" /><b>Sample mandi prices</b></div>
-              <span className="landing-price-demo">DEMO DATA</span>
+              <div><span className="landing-price-pulse" /><b>{priceSource === 'official' && priceRows.length ? 'Latest mandi prices' : 'Mandi price preview'}</b></div>
+              {priceSource && (
+                <span className="landing-price-demo">
+              {priceSource === 'official'
+                ? (priceRows.length ? 'OFFICIAL DATA' : 'NO FEED ROWS')
+                : priceSource === 'demo' ? 'DEMO FALLBACK' : 'UNAVAILABLE'}
+                </span>
+              )}
             </div>
             <div className="landing-price-tabs" aria-hidden="true"><span className="active">Tomato</span><span>Potato</span><span>Onion</span><span>Chilli</span></div>
             <div className="landing-price-table-wrap">
               <table className="landing-price-table">
                 <thead><tr><th>Crop</th><th>Market</th><th>Min (₹/q)</th><th>Max (₹/q)</th><th>Modal (₹/q)</th></tr></thead>
                 <tbody>
-                  {PRICES.map(row => (
-                    <tr key={row.crop}><td>{row.crop}</td><td>{row.market}</td><td>{row.min}</td><td>{row.max}</td><td><b>{row.modal}</b></td></tr>
+                  {priceRows.map(row => (
+                    <tr key={row.crop}>
+                      <td>{row.crop}</td><td>{row.market}<small style={{ display: 'block', color: 'var(--text-2)' }}>{row.date}</small></td>
+                      <td>₹{Number(row.min).toLocaleString('en-IN')}</td>
+                      <td>₹{Number(row.max).toLocaleString('en-IN')}</td>
+                      <td><b>₹{Number(row.modal).toLocaleString('en-IN')}</b></td>
+                    </tr>
                   ))}
+                  {priceRows.length === 0 && (
+                    <tr><td colSpan="5">
+                      {priceSource === 'unavailable'
+                        ? 'Price preview could not load. Try the mandi finder.'
+                        : priceSource === 'official'
+                          ? 'No matching official price records are available.'
+                          : priceSource === 'demo'
+                            ? 'No prototype price rows are available.'
+                            : 'Loading current mandi data…'}
+                    </td></tr>
+                  )}
                 </tbody>
               </table>
             </div>
-            <div className="landing-price-foot"><span>Illustrative sample values only · verify rates locally before selling.</span><Link to="/finder">Explore markets <Icon name="arrow" size={14} /></Link></div>
+            <div className="landing-price-foot">
+              <span>
+                {priceSource === 'official' && priceRows.length
+                  ? 'Official feed records · check each arrival date and confirm locally.'
+                  : priceSource === 'official'
+                    ? 'No official records matched these preview crops.'
+                    : 'Fallback preview is clearly labeled when official prices are unavailable.'}
+              </span>
+              <Link to="/finder">Explore markets <Icon name="arrow" size={14} /></Link>
+            </div>
           </div>
           <div className="landing-produce-art" aria-hidden="true">
             <div className="landing-produce-spark">Better information.<br /><b>More confident decisions.</b><i /></div>

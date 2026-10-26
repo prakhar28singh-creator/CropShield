@@ -101,6 +101,89 @@ CROP_PROFILES = {
     },
 }
 
+
+def _extended_crop_profile(
+    display_name: str,
+    optimal_temp_min: int,
+    optimal_temp_max: int,
+    optimal_humidity_min: int,
+    optimal_humidity_max: int,
+    high_risk_temp: int,
+    high_risk_humidity: int,
+    max_safe_days: dict,
+    base_loss_rate: float,
+) -> dict:
+    loss_multipliers = {
+        "cold_storage": 0.2,
+        "ventilated_room": 0.5,
+        "open_room": 1.0,
+        "bamboo_basket": 1.25,
+        "gunny_bag": 1.1,
+    }
+    return {
+        "optimal_temp_min": optimal_temp_min,
+        "optimal_temp_max": optimal_temp_max,
+        "optimal_humidity_min": optimal_humidity_min,
+        "optimal_humidity_max": optimal_humidity_max,
+        "max_safe_days": max_safe_days,
+        "high_risk_temp": high_risk_temp,
+        "high_risk_humidity": high_risk_humidity,
+        "loss_rate_per_day": {
+            storage: round(base_loss_rate * multiplier, 4)
+            for storage, multiplier in loss_multipliers.items()
+        },
+        "display_name": display_name,
+    }
+
+
+CROP_PROFILES.update({
+    "rice": _extended_crop_profile(
+        "Rice", 12, 25, 50, 65, 35, 75,
+        {"cold_storage": 365, "ventilated_room": 180, "open_room": 120, "bamboo_basket": 60, "gunny_bag": 90},
+        0.0003,
+    ),
+    "maize": _extended_crop_profile(
+        "Maize", 10, 25, 55, 70, 35, 80,
+        {"cold_storage": 365, "ventilated_room": 180, "open_room": 120, "bamboo_basket": 60, "gunny_bag": 90},
+        0.0005,
+    ),
+    "chilli": _extended_crop_profile(
+        "Chilli", 7, 10, 90, 95, 30, 98,
+        {"cold_storage": 14, "ventilated_room": 5, "open_room": 3, "bamboo_basket": 2, "gunny_bag": 2},
+        0.08,
+    ),
+    "brinjal": _extended_crop_profile(
+        "Brinjal", 10, 12, 90, 95, 30, 98,
+        {"cold_storage": 14, "ventilated_room": 5, "open_room": 3, "bamboo_basket": 2, "gunny_bag": 2},
+        0.075,
+    ),
+    "cabbage": _extended_crop_profile(
+        "Cabbage", 0, 5, 90, 95, 30, 98,
+        {"cold_storage": 60, "ventilated_room": 14, "open_room": 7, "bamboo_basket": 5, "gunny_bag": 7},
+        0.03,
+    ),
+    "cauliflower": _extended_crop_profile(
+        "Cauliflower", 0, 4, 90, 95, 30, 98,
+        {"cold_storage": 21, "ventilated_room": 5, "open_room": 3, "bamboo_basket": 2, "gunny_bag": 2},
+        0.07,
+    ),
+    "okra": _extended_crop_profile(
+        "Okra", 7, 10, 90, 95, 30, 98,
+        {"cold_storage": 14, "ventilated_room": 4, "open_room": 2, "bamboo_basket": 1, "gunny_bag": 2},
+        0.09,
+    ),
+    "mango": _extended_crop_profile(
+        "Mango", 10, 13, 85, 90, 35, 98,
+        {"cold_storage": 21, "ventilated_room": 7, "open_room": 4, "bamboo_basket": 2, "gunny_bag": 3},
+        0.07,
+    ),
+    "banana": _extended_crop_profile(
+        "Banana", 13, 14, 90, 95, 30, 98,
+        {"cold_storage": 21, "ventilated_room": 7, "open_room": 4, "bamboo_basket": 2, "gunny_bag": 3},
+        0.06,
+    ),
+})
+
 STORAGE_DISPLAY = {
     "cold_storage": "Cold Storage",
     "ventilated_room": "Ventilated Room",
