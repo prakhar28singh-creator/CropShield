@@ -1,4 +1,11 @@
 """Vercel serverless handler for CropShield FastAPI application."""
+import sys
+import os
+from pathlib import Path
+
+# Add parent directory to path so we can import from backend/
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 from fastapi import FastAPI
 
 app = FastAPI(title="CropShield API", version="1.0.0")
