@@ -1,19 +1,27 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "functions": {
-    "backend/api/handler.py": {
-      "runtime": "python3.11",
-      "installCommand": "pip install -r backend/requirements.txt"
+  "services": {
+    "backend": {
+      "root": "backend",
+      "framework": "fastapi"
+    },
+    "frontend": {
+      "root": "frontend",
+      "framework": "vite"
     }
   },
   "rewrites": [
     {
-      "src": "/api/(.*)",
-      "dest": "/backend/api/handler.py"
+      "source": "/api/(.*)",
+      "destination": {
+        "service": "backend"
+      }
     },
     {
-      "src": "/(.*)",
-      "dest": "frontend/dist/index.html"
+      "source": "/(.*)",
+      "destination": {
+        "service": "frontend"
+      }
     }
   ]
 }
