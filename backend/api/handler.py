@@ -2,14 +2,13 @@ from fastapi import FastAPI
 
 app = FastAPI(title="CropShield API", version="1.0.0")
 
-# Hardcoded India locations data (no external file needed)
+# Embedded data - no external files needed
 INDIA_LOCATIONS = [
     {"state": "Andaman and Nicobar Islands", "districts": ["Nicobars", "North And Middle Andaman", "South Andamans"]},
     {"state": "Andhra Pradesh", "districts": ["Alluri Sitharama Raju", "Anakapalli", "Ananthapuramu"]},
     {"state": "Arunachal Pradesh", "districts": ["Anjaw", "Changlang", "Dibang Valley"]},
     {"state": "Assam", "districts": ["Baksa", "Barpeta", "Biswanath", "Bongaigaon", "Cachar"]},
     {"state": "Bihar", "districts": ["Araria", "Arwal", "Aurangabad", "Banka", "Begusarai"]},
-    {"state": "Chhattisgarh", "districts": ["Balod", "Baloda Bazar", "Balrampur", "Bastar", "Bemetara"]},
     {"state": "Delhi", "districts": ["Central Delhi", "East Delhi", "New Delhi", "North Delhi", "South Delhi", "West Delhi"]},
     {"state": "Gujarat", "districts": ["Ahmedabad", "Amreli", "Anand", "Aravalli", "Banaskantha"]},
     {"state": "Haryana", "districts": ["Ambala", "Bhiwani", "Charkhi Dadri", "Faridabad", "Fatehabad"]},
