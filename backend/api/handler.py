@@ -1,14 +1,44 @@
 from fastapi import FastAPI
+import json
+from pathlib import Path
 
 app = FastAPI(title="CropShield API", version="1.0.0")
 
+# Load India locations data from same directory as handler.py
+INDIA_LOCATIONS = []
+locations_path = Path(__file__).parent / "india_locations.json"
+if locations_path.exists():
+    with open(locations_path, encoding="utf-8") as f:
+        INDIA_LOCATIONS = json.load(f)
+    print(f"Loaded {len(INDIA_LOCATIONS)} locations from {locations_path}")
+else:
+    print(f"WARNING: {locations_path} not found!")
+    # Fallback data if JSON not found
+    INDIA_LOCATIONS = [
+        {"state": "Andaman and Nicobar Islands", "districts": ["Nicobars", "North And Middle Andaman", "South Andamans"]},
+        {"state": "Andhra Pradesh", "districts": ["Alluri Sitharama Raju", "Anakapalli", "Ananthapuramu"]},
+        {"state": "Arunachal Pradesh", "districts": ["Anjaw", "Changlang", "Dibang Valley"]}
+    ]
+
 @app.get("/health")
 def health():
-    return {"status": "ok"}
+    return {"status": "ok", "locations_loaded": len(INDIA_LOCATIONS)}
 
 @app.get("/market-meta")
 def market_meta():
-    return {"states": [], "crops": [], "demo_notice": "Test mode"}
+    states = [
+        {
+            "name": entry["state"],
+            "districts": sorted(entry.get("districts", []), key=str.casefold)
+        }
+        for entry in sorted(INDIA_LOCATIONS, key=lambda item: item.get("state", "").casefold())
+    ]
+    
+    return {
+        "states": states,
+        "crops": [],
+        "demo_notice": "DEMO Data — Synthetic prototype prices and bundled monthly history; not live or official market data."
+    }
 
 @app.get("/crops")
 def list_crops():
@@ -16,4 +46,4 @@ def list_crops():
 
 @app.get("/")
 def root():
-    return {"status": "ok", "service": "CropShield"}
+    return {"status": "ok", "service": "CropShield", "locations_count": len(INDIA_LOCATIONS)}
