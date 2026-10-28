@@ -82,10 +82,20 @@ default.
 
 For local backend configuration, copy `backend/.env.example` to
 `backend/.env` and set `DATA_GOV_IN_API_KEY` there. The backend loads this file
-at startup. Never commit `backend/.env` or expose the key through a `VITE_*`
-frontend variable. For deployment, add `DATA_GOV_IN_API_KEY` in your backend
-host's environment-variable or secret settings instead of adding it to a file
-in the repository.
+at startup.
+
+⚠️ **CRITICAL SECURITY**: Never commit `backend/.env` or expose the actual
+API key value in any public repository, documentation, or chat logs. The key
+is personal and must remain secret. Do not share the key value publicly.
+
+The `backend/.env.example` file contains `DATA_GOV_IN_API_KEY=""` as a
+placeholder - copy it and replace with your own key only on your local
+machine. The `.gitignore` file excludes `*.env` files from being committed
+to git.
+
+For deployment, add `DATA_GOV_IN_API_KEY` as a secret environment variable
+in your hosting platform (Vercel, Railway, Render, etc.) - never add it to
+a checked-in file in the repository.
 
 With the key configured, the backend queries the official resource over HTTPS.
 If the request fails or its response is unusable, it falls back to the clearly
@@ -254,12 +264,12 @@ Production API documentation is disabled. For local development, open
 ## Data and model notes
 
 The backend requests the data.gov.in current daily mandi-price resource
-(`9ef84268-d588-465a-a308-a864a43d0070`) over HTTPS. Configure
-`DATA_GOV_IN_API_KEY` in the backend host's secret/environment-variable
-settings. `DATA_GOV_IN_RESOURCE_ID` can optionally override the default
-resource. The browser never receives the key. If the official request fails,
-the API falls back to labeled sample prices; if it succeeds but returns no
-matching market rows, the result remains empty instead of showing samples.
+over HTTPS. Configure `DATA_GOV_IN_API_KEY` in the backend host's
+secret/environment-variable settings. The resource ID can optionally be
+overridden via `DATA_GOV_IN_RESOURCE_ID` environment variable. The browser
+never receives the key. If the official request fails, the API falls back to
+labeled sample prices; if it succeeds but returns no matching market rows,
+the result remains empty instead of showing samples.
 
 The bundled location snapshot contains 36 states and union territories and 784
 districts. It was obtained from the

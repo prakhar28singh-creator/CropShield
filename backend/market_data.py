@@ -458,10 +458,20 @@ def get_market_prices(crop: str, district: str = None, state: str = None, market
 
 def get_market_meta():
     """Shared state, district, and supported-crop lists for the app."""
+    # Debug logging
+    logger.debug(f"INDIA_LOCATIONS length: {len(INDIA_LOCATIONS)}")
+    if INDIA_LOCATIONS:
+        first = INDIA_LOCATIONS[0]
+        logger.debug(f"First entry keys: {list(first.keys())}")
+        logger.debug(f"First districts: {first.get('districts', [])[:3]}")
+    
     return {
         "states": [
-            {"name": entry["state"], "districts": sorted(entry["districts"], key=str.casefold)}
-            for entry in sorted(INDIA_LOCATIONS, key=lambda item: item["state"].casefold())
+            {
+                "name": entry["state"], 
+                "districts": sorted(entry.get("districts", []), key=str.casefold)
+            }
+            for entry in sorted(INDIA_LOCATIONS, key=lambda item: item.get("state", "").casefold())
         ],
         "crops": [
             {"key": k, "display_name": CROP_DISPLAY[k]}
@@ -469,6 +479,7 @@ def get_market_meta():
         ],
         "demo_notice": DEMO_NOTICE,
     }
+
 
 
 def is_valid_location(state: str, district: str) -> bool:

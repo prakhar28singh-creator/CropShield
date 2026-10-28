@@ -7,6 +7,8 @@ services:
       ENABLE_API_DOCS: "false"
       CORS_ORIGINS: ${CORS_ORIGINS:-}
       CROPSHIELD_DB_PATH: /data/cropshield.db
+    ports:
+      - "8000:8000"
     expose:
       - "8000"
     volumes:

@@ -1,13 +1,20 @@
-import sqlite3
-import json
 import os
+import json
+import sqlite3
+import hashlib
 from datetime import datetime
 from pathlib import Path
 
-DB_PATH = Path(os.environ.get("CROPSHIELD_DB_PATH", Path(__file__).parent / "cropshield.db"))
+DATABASE_URL = os.environ.get("DATABASE_URL")
+DB_PATH = Path(os.environ.get("CROPSHIELD_DB_PATH", Path(__file__).parent / "cropshield.db")) if not DATABASE_URL else Path("./.tmp")
 
 
 def get_db():
+    if DATABASE_URL:
+        import psycopg2
+        conn = psycopg2.connect(DATABASE_URL)
+        conn.row_factory = dict
+        return conn
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(str(DB_PATH), timeout=10)
     conn.row_factory = sqlite3.Row
