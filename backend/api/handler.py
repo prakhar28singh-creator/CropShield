@@ -2,36 +2,27 @@ from fastapi import FastAPI
 
 app = FastAPI(title="CropShield API", version="1.0.0")
 
-# All India locations data embedded directly (no external file needed)
+# Hardcoded India locations data (no external file needed)
 INDIA_LOCATIONS = [
     {"state": "Andaman and Nicobar Islands", "districts": ["Nicobars", "North And Middle Andaman", "South Andamans"]},
-    {"state": "Andhra Pradesh", "districts": ["Alluri Sitharama Raju", "Anakapalli", "Ananthapuramu", "Anantapur", "Assam"]},
-    {"state": "Arunachal Pradesh", "districts": ["Anjaw", "Changlang", "Dibang Valley", "East Kameng", "East Siang"]},
+    {"state": "Andhra Pradesh", "districts": ["Alluri Sitharama Raju", "Anakapalli", "Ananthapuramu"]},
+    {"state": "Arunachal Pradesh", "districts": ["Anjaw", "Changlang", "Dibang Valley"]},
     {"state": "Assam", "districts": ["Baksa", "Barpeta", "Biswanath", "Bongaigaon", "Cachar"]},
     {"state": "Bihar", "districts": ["Araria", "Arwal", "Aurangabad", "Banka", "Begusarai"]},
     {"state": "Chhattisgarh", "districts": ["Balod", "Baloda Bazar", "Balrampur", "Bastar", "Bemetara"]},
-    {"state": "Goa", "districts": ["North Goa", "South Goa"]},
+    {"state": "Delhi", "districts": ["Central Delhi", "East Delhi", "New Delhi", "North Delhi", "South Delhi", "West Delhi"]},
     {"state": "Gujarat", "districts": ["Ahmedabad", "Amreli", "Anand", "Aravalli", "Banaskantha"]},
     {"state": "Haryana", "districts": ["Ambala", "Bhiwani", "Charkhi Dadri", "Faridabad", "Fatehabad"]},
     {"state": "Himachal Pradesh", "districts": ["Bilaspur", "Chamba", "Hamirpur", "Kangra", "Kinnaur"]},
-    {"state": "Jharkhand", "districts": ["Bokaro", "Chatra", "Deoghar", "Dhanbad", "Dumka"]},
     {"state": "Karnataka", "districts": ["Bagalkot", "Ballari", "Belagavi", "Bengaluru Rural", "Bengaluru Urban"]},
     {"state": "Kerala", "districts": ["Alappuzha", "Ernakulam", "Idukki", "Kannur", "Kasaragod"]},
     {"state": "Madhya Pradesh", "districts": ["Agar Malwa", "Alirajpur", "Anuppur", "Ashoknagar", "Balaghat"]},
     {"state": "Maharashtra", "districts": ["Ahmednagar", "Akola", "Amravati", "Aurangabad", "Beed"]},
-    {"state": "Manipur", "districts": ["Bishnupur", "Chandel", "Churachandpur", "Imphal East", "Imphal West"]},
-    {"state": "Meghalaya", "districts": ["East Garo Hills", "East Jaintia Hills", "East Khasi Hills", "North Garo Hills"]},
-    {"state": "Mizoram", "districts": ["Aizawl", "Champhai", "Kolasib", "Lawngtlai", "Lunglei"]},
-    {"state": "Nagaland", "districts": ["Dimapur", "Kiphire", "Kohima", "Longleng", "Mokokchung"]},
-    {"state": "Odisha", "districts": ["Angul", "Balangir", "Balasore", "Bargarh", "Bhadrak"]},
     {"state": "Punjab", "districts": ["Amritsar", "Barnala", "Bathinda", "Faridkot", "Fatehgarh Sahib"]},
     {"state": "Rajasthan", "districts": ["Ajmer", "Alwar", "Banswara", "Baran", "Barmer"]},
-    {"state": "Sikkim", "districts": ["East Sikkim", "North Sikkim", "South Sikkim", "West Sikkim"]},
     {"state": "Tamil Nadu", "districts": ["Ariyalur", "Chengalpattu", "Chennai", "Coimbatore", "Cuddalore"]},
     {"state": "Telangana", "districts": ["Adilabad", "Bhadradri Kothagudem", "Hyderabad", "Jagtial", "Jangaon"]},
-    {"state": "Tripura", "districts": ["Dhalai", "Gomati", "Khowai", "North Tripura", "Sepahijala"]},
     {"state": "Uttar Pradesh", "districts": ["Agra", "Aligarh", "Ambedkar Nagar", "Amethi", "Amroha"]},
-    {"state": "Uttarakhand", "districts": ["Almora", "Bageshwar", "Chamoli", "Champawat", "Chitrakoot"]},
     {"state": "West Bengal", "districts": ["Alipurduar", "Bankura", "Birbhum", "Cooch Behar", "Dakshin Dinajpur"]}
 ]
 
