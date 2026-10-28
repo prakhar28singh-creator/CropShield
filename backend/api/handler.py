@@ -1,6 +1,5 @@
 """Vercel serverless handler for CropShield FastAPI application."""
 import json
-import os
 from pathlib import Path
 from fastapi import FastAPI
 
@@ -13,11 +12,9 @@ if locations_path.exists():
     with open(locations_path, encoding="utf-8") as f:
         INDIA_LOCATIONS = json.load(f)
 
-
 @app.get("/health")
 def health():
     return {"status": "ok"}
-
 
 @app.get("/market-meta")
 def market_meta():
@@ -29,38 +26,15 @@ def market_meta():
         for entry in sorted(INDIA_LOCATIONS, key=lambda item: item.get("state", "").casefold())
     ]
     
-    crops = [
-        {"key": k, "display_name": v.get("display_name", k)}
-        for k, v in CROP_PROFILES.items()
-    ]
-    
     return {
         "states": states,
-        "crops": crops,
+        "crops": [],
         "demo_notice": "DEMO DATA — Synthetic prototype prices and bundled monthly history; not live or official market data."
     }
 
-
-# Load crop profiles at module load time
-CROP_PROFILES = {}
-crop_profiles_path = Path(__file__).parent.parent / "risk_engine.py"
-# We'll load CROP_PROFILES dynamically to avoid circular imports
-# For now, return empty crops if risk_engine can't be imported
-try:
-    sys.path.insert(0, str(Path(__file__).parent.parent))
-    from risk_engine import CROP_PROFILES
-except:
-    CROP_PROFILES = {}
-
-
 @app.get("/crops")
 def list_crops():
-    crops = [
-        {"key": k, "display_name": v.get("display_name", k)}
-        for k, v in CROP_PROFILES.items()
-    ]
-    return {"crops": crops}
-
+    return {"crops": []}
 
 @app.get("/")
 def root():
