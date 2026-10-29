@@ -1,2 +1,2 @@
 [tool.vercel]
-entrypoint = "handler:app"
+entrypoint = "api/handler:app"
