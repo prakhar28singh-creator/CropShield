@@ -9,4 +9,13 @@ export default defineConfig({
     assetsDir: 'assets',
     sourcemap: true,
   },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://crop-shield-one.vercel.app',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
+  },
 })
