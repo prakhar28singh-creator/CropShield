@@ -2,7 +2,6 @@ from fastapi import FastAPI
 
 app = FastAPI(title="CropShield API", version="1.0.0")
 
-# Embedded India locations data - no external files needed
 INDIA_LOCATIONS = [
     {"state": "Andaman and Nicobar Islands", "districts": ["Nicobars", "North And Middle Andaman", "South Andamans"]},
     {"state": "Andhra Pradesh", "districts": ["Alluri Sitharama Raju", "Anakapalli", "Ananthapuramu"]},
@@ -40,7 +39,7 @@ def market_meta():
     return {
         "states": states,
         "crops": [],
-        "demo_notice": "DEMO Data - Synthetic prototype prices and bundled monthly history; not live or official market data."
+        "demo_notice": "DEMO Data - Synthetic prototype prices and bundled monthly history"
     }
 
 @app.get("/crops")
