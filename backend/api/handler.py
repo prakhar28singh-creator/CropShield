@@ -2,7 +2,7 @@ from fastapi import FastAPI
 
 app = FastAPI(title="CropShield API", version="1.0.0")
 
-# Hardcoded data - no external files needed
+# Embedded India locations data - no external files needed
 INDIA_LOCATIONS = [
     {"state": "Andaman and Nicobar Islands", "districts": ["Nicobars", "North And Middle Andaman", "South Andamans"]},
     {"state": "Andhra Pradesh", "districts": ["Alluri Sitharama Raju", "Anakapalli", "Ananthapuramu"]},
@@ -32,9 +32,16 @@ def health():
 @app.get("/market-meta")
 def market_meta():
     states = []
-    for entry in sorted(INDIA_LOCATIONS, key=lambda x: item["state"].casefold()):
-        states.append({"name": entry["state"], "districts": sorted(entry["districts"], key=str.casefold)})
-    return {"states": states, "crops": [], "demo_notice": "DEMO Data - Synthetic prototype prices"}
+    for entry in sorted(INDIA_LOCATIONS, key=lambda x: x["state"].casefold()):
+        states.append({
+            "name": entry["state"],
+            "districts": sorted(entry["districts"], key=str.casefold)
+        })
+    return {
+        "states": states,
+        "crops": [],
+        "demo_notice": "DEMO Data - Synthetic prototype prices and bundled monthly history; not live or official market data."
+    }
 
 @app.get("/crops")
 def list_crops():
@@ -42,4 +49,4 @@ def list_crops():
 
 @app.get("/")
 def root():
-    return {"status": "ok", "service": "CropShield", "locations_count": 36}
+    return {"status": "ok", "service": "CropShield", "locations_count": len(INDIA_LOCATIONS)}
