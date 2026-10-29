@@ -1,0 +1,18 @@
+{
+  "functions": {
+    "handler.py": {
+      "runtime": "python3.11",
+      "entrypoint": "handler:app"
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/backend/api/handler.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/frontend/dist/index.html"
+    }
+  ]
+}
