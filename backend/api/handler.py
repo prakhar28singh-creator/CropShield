@@ -1,8 +1,10 @@
 from fastapi import FastAPI
+import json
+from pathlib import Path
 
 app = FastAPI(title="CropShield API", version="1.0.0")
 
-# Embedded India locations data - no external file needed
+# Embedded data - no external files needed
 INDIA_LOCATIONS = [
     {"state": "Andaman and Nicobar Islands", "districts": ["Nicobars", "North And Middle Andaman", "South Andamans"]},
     {"state": "Andhra Pradesh", "districts": ["Alluri Sitharama Raju", "Anakapalli", "Ananthapuramu"]},
